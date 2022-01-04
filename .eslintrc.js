@@ -20,9 +20,10 @@ module.exports = {
     ecmaVersion: 2020,
     sourceType: 'module',
   },
-  plugins: ['typescript-sort-keys'],
+  plugins: ['typescript-sort-keys', '@emotion'],
   ignorePatterns: ['*.md'],
   rules: {
+    '@emotion/pkg-renaming': 'error',
     '@typescript-eslint/explicit-function-return-type': 'off',
     '@typescript-eslint/no-empty-function': 'off',
     '@typescript-eslint/no-use-before-define': 'off',
