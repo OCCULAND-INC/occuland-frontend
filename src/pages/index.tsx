@@ -1,9 +1,10 @@
-import styles from '~/styles/Home.module.css';
+import Sidebar from '~/components/global/SideBar/Sidebar';
 
 function Home() {
   return (
-    <div className={styles.container} css={{ background: 'red' }}>
-      <h1 className="text-3xl font-bold underline">Hello world!</h1>
+    <div className="flex flex-row">
+      <Sidebar />
+      <main className="grow">main area</main>
     </div>
   );
 }
