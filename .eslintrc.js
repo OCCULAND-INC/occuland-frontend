@@ -20,7 +20,7 @@ module.exports = {
     ecmaVersion: 2020,
     sourceType: 'module',
   },
-  plugins: ['typescript-sort-keys', '@emotion'],
+  plugins: ['typescript-sort-keys', '@emotion', 'tailwindcss'],
   ignorePatterns: ['*.md'],
   rules: {
     '@emotion/pkg-renaming': 'error',
@@ -65,8 +65,19 @@ module.exports = {
     quotes: ['error', 'single', { avoidEscape: true }],
     'react/prop-types': [0],
     'react/display-name': [0, { ignoreTranspilerName: false }],
+    // 'tailwindcss/no-custom-classname': 'warn',
+    // 'tailwindcss/no-contradicting-classname': 'error',
   },
   settings: {
     react: { version: 'detect' },
+    // tailwindcss: {
+    //   // These are the default values but feel free to customize
+    //   callees: ['classnames', 'clsx', 'ctl'],
+    //   config: 'tailwind.config.js',
+    //   groups: defaultGroups, // imported from groups.js
+    //   prependCustom: false,
+    //   removeDuplicates: true,
+    //   whitelist: [],
+    // },
   },
 };
