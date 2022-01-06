@@ -6,5 +6,8 @@ module.exports = {
   theme: {
     extend: {},
   },
-  plugins: [require('@themesberg/flowbite/plugin')],
+  plugins: [
+    require('@themesberg/flowbite/plugin'),
+    require('@tailwindcss/aspect-ratio'),
+  ],
 };

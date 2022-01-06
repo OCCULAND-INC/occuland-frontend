@@ -8,9 +8,19 @@ import Button from '~/components/global/Button/Button';
 import Input from '~/components/global/Input/Input';
 
 import { mockProducts } from '../Landmarket/items.mock';
+import LandDetailModal from './LandDetailModal/LandDetailModal';
 
 function LandContainer() {
   const [value, onChange] = useState(new Date());
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+
+  const handleOpenModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+  };
 
   return (
     <div className="container mx-auto max-h-screen flex flex-col p-10 overflow-scroll">
@@ -32,7 +42,9 @@ function LandContainer() {
           />
         </div>
         <div className="ml-5">
-          <h5 className="text-xl mb-5">Plot size</h5>
+          <h5 className="text-xl mb-5" onClick={handleOpenModal}>
+            Plot size
+          </h5>
           <div className="flex justify-between mb-5">
             <p className="mr-5 text-xl">Daily price </p>
             <p className="font-bold text-gray-900 dark:text-white">
@@ -57,6 +69,7 @@ function LandContainer() {
       <div className="flex justify-center items-center">
         <Button onClick={() => {}}>Request Rent</Button>
       </div>
+      <LandDetailModal isOpen={isModalOpen} onClose={handleCloseModal} />
     </div>
   );
 }
