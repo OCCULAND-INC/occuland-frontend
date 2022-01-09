@@ -10,26 +10,26 @@ export const ROUTES_MAP = [
   {
     href: '/',
     title: 'Home',
-    icon: <HomeIcon className="h-5 w-5 text-blue-500 mr-2" />,
+    icon: <HomeIcon className="h-5 w-5 text-gray-900 mr-2" />,
   },
   {
     href: '/landmarket',
     title: 'Land Market',
-    icon: <ShoppingCartIcon className="h-5 w-5 text-blue-500 mr-2" />,
+    icon: <ShoppingCartIcon className="h-5 w-5 text-gray-900 mr-2" />,
   },
   {
     href: '/experience',
     title: 'Experience',
-    icon: <PencilIcon className="h-5 w-5 text-blue-500 mr-2" />,
+    icon: <PencilIcon className="h-5 w-5 text-gray-900 mr-2" />,
   },
   {
     href: '/bridge',
     title: 'Asset Bridge',
-    icon: <XIcon className="h-5 w-5 text-blue-500 mr-2" />,
+    icon: <XIcon className="h-5 w-5 text-gray-900 mr-2" />,
   },
   {
     href: '/setting',
     title: 'Setting',
-    icon: <CogIcon className="h-5 w-5 text-blue-500 mr-2" />,
+    icon: <CogIcon className="h-5 w-5 text-gray-900 mr-2" />,
   },
 ];
