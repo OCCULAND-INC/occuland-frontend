@@ -6,8 +6,7 @@ import TokenBridge from './TokenBridge/TokenBridge';
 
 function BridgeContainer() {
   const context = useWeb3React<Web3Provider>();
-  const { connector, chainId } = context;
-  console.info('chainId======>', chainId);
+  const { connector } = context;
 
   if (connector) {
     return <TokenBridge />;
