@@ -11,7 +11,7 @@ function Sidebar() {
   };
 
   return (
-    <nav className="bg-white flex flex-col flex-shrink-0 h-screen items-center py-8 px-2 rounded-tr-4xl rounded-br-4xl shadow-2xl">
+    <nav className="bg-white flex flex-col flex-shrink-0 h-screen items-center py-10 px-5 rounded-tr-4xl rounded-br-4xl shadow-2xl">
       <div className="mb-8">
         <BeakerIcon className="h-6 w-6 text-gray-900" />
       </div>

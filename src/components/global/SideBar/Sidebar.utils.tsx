@@ -28,8 +28,8 @@ export const ROUTES_MAP = [
     icon: <XIcon className="h-5 w-5 text-gray-900 mr-2" />,
   },
   {
-    href: '/setting',
-    title: 'Setting',
+    href: '/settings',
+    title: 'Settings',
     icon: <CogIcon className="h-5 w-5 text-gray-900 mr-2" />,
   },
 ];
