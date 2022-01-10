@@ -7,13 +7,20 @@ export interface SelectOption {
 }
 
 interface SelectProps {
+  className?: string;
   defaultValue?: string;
   label?: string;
   onChange: (option: SelectOption) => void;
   options: Array<SelectOption>;
 }
 
-function Select({ defaultValue, label, options, onChange }: SelectProps) {
+function Select({
+  defaultValue,
+  label,
+  options,
+  onChange,
+  className,
+}: SelectProps) {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [selectedOption, setSelectedOption] = useState<SelectOption>();
 
@@ -42,7 +49,7 @@ function Select({ defaultValue, label, options, onChange }: SelectProps) {
   }, [defaultValue, options]);
 
   return (
-    <div onClick={toggleOpen}>
+    <div onClick={toggleOpen} className={className}>
       {label && (
         <label
           id="listbox-label"
@@ -60,7 +67,7 @@ function Select({ defaultValue, label, options, onChange }: SelectProps) {
           aria-labelledby="listbox-label"
         >
           <span className="flex items-center">
-            <span className="block truncate">{selectedOption?.text}</span>
+            <span className="block">{selectedOption?.text}</span>
           </span>
           <span className="ml-3 absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
             <SelectorIcon className="h-5 w-5 text-gray-400" />
@@ -84,9 +91,7 @@ function Select({ defaultValue, label, options, onChange }: SelectProps) {
                 onClick={handleClickOption(value)}
               >
                 <div className="flex items-center">
-                  <span className="font-normal ml-3 block truncate">
-                    {text}
-                  </span>
+                  <span className="font-normal block">{text}</span>
                 </div>
                 {value === selectedOption?.value && (
                   <span className="text-indigo-600 absolute inset-y-0 right-0 flex items-center pr-4">
