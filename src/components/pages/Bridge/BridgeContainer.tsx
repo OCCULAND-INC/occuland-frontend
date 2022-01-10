@@ -1,13 +1,14 @@
 import { Web3Provider } from '@ethersproject/providers';
 import { AbstractConnector } from '@web3-react/abstract-connector';
 import { useWeb3React } from '@web3-react/core';
+import Image from 'next/image';
 import { useEffect, useState } from 'react';
 
 import Button from '~/components/global/Button/Button';
 import { useEagerConnect, useInactiveListener } from '~/hooks/connects';
 import {
   ConnectorNames,
-  connectorsByName,
+  CONNECTORS_WITH_INFO,
   ConnectorType,
 } from '~/lib/utils/connectors';
 
@@ -23,7 +24,7 @@ function BridgeContainer() {
     // active,
     error,
   } = context;
-  console.log('chainId======>', chainId);
+  console.info('chainId======>', chainId);
   const [activatingConnector, setActivatingConnector] =
     useState<AbstractConnector>();
   useEffect(() => {
@@ -41,13 +42,17 @@ function BridgeContainer() {
   const handleConnect =
     (currentConnector: ConnectorType, name: ConnectorNames) => () => {
       setActivatingConnector(currentConnector);
-      activate(connectorsByName[name]);
+      activate(CONNECTORS_WITH_INFO[name]);
     };
 
   return (
     <div className="container mx-auto h-full flex flex-col justify-center items-center">
-      {Object.keys(connectorsByName).map((name) => {
-        const currentConnector = connectorsByName[name as ConnectorNames];
+      {Object.keys(CONNECTORS_WITH_INFO).map((name) => {
+        const {
+          connector: currentConnector,
+          svg,
+          name: connectorName,
+        } = CONNECTORS_WITH_INFO[name as ConnectorNames];
         const activating = currentConnector === activatingConnector;
         const connected = currentConnector === connector;
         const disabled =
@@ -58,8 +63,10 @@ function BridgeContainer() {
             key={name}
             onClick={handleConnect(currentConnector, name as ConnectorNames)}
             disabled={disabled}
+            className="flex justify-center items-center"
           >
-            {name}
+            {svg && <Image src={svg} />}
+            <span className="mx-5">{connectorName}</span>
             {activating && 'Connecting...'}
             {connected && (
               <span role="img" aria-label="check">

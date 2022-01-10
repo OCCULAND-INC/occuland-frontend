@@ -8,6 +8,8 @@ import {
 import { NetworkConnector } from '@web3-react/network-connector';
 import { UserRejectedRequestError as UserRejectedRequestErrorWalletConnect } from '@web3-react/walletconnect-connector';
 
+import MetamaskIcon from '~/assets/wallets/metamask.svg';
+
 const RPC_URLS: { [chainId: number]: string } = {
   1: process.env.RPC_URL_1 as string,
   4: process.env.RPC_URL_4 as string,
@@ -45,10 +47,24 @@ export enum ConnectorNames {
 }
 
 export type ConnectorType = InjectedConnector | NetworkConnector;
+interface ConnectorWithInfo {
+  connector: ConnectorType;
+  name: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  svg: any;
+}
 
-export const connectorsByName: {
-  [connectorName in ConnectorNames]: ConnectorType;
+export const CONNECTORS_WITH_INFO: {
+  [connectorName in ConnectorNames]: ConnectorWithInfo;
 } = {
-  [ConnectorNames.Injected]: injected,
-  [ConnectorNames.Network]: network,
+  [ConnectorNames.Injected]: {
+    name: 'Metamask',
+    connector: injected,
+    svg: MetamaskIcon,
+  },
+  [ConnectorNames.Network]: {
+    name: 'Network',
+    connector: network,
+    svg: null,
+  },
 };
