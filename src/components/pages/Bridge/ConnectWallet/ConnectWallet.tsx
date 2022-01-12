@@ -2,6 +2,8 @@ import { Web3Provider } from '@ethersproject/providers';
 import { useWeb3React } from '@web3-react/core';
 import Image from 'next/image';
 
+import Alert from '~/components/global/Alert/Alert';
+import { AlertType } from '~/components/global/Alert/Alert.types';
 import Button from '~/components/global/Button/Button';
 import { useWeb3ManagerContext } from '~/contexts/Web3Manager.context';
 import {
@@ -28,7 +30,7 @@ function ConnectWallet({ onClick }: Props) {
     };
 
   return (
-    <div className="container mx-auto h-full flex flex-col justify-center items-center">
+    <div className="container mx-auto h-full flex flex-col justify-center items-center relative">
       {Object.keys(CONNECTORS_WITH_INFO).map((name) => {
         const {
           connector: currentConnector,
@@ -37,7 +39,6 @@ function ConnectWallet({ onClick }: Props) {
         } = CONNECTORS_WITH_INFO[name as ConnectorNames];
         const activating = currentConnector === activatingConnector;
         const connected = currentConnector === connector;
-        console.log('======>', triedEager, activatingConnector, error);
         const disabled = !triedEager || !!activatingConnector || !!error;
 
         return (
@@ -62,6 +63,7 @@ function ConnectWallet({ onClick }: Props) {
           </Button>
         );
       })}
+      {error && <Alert type={AlertType.ERROR} text={error.message} />}
     </div>
   );
 }

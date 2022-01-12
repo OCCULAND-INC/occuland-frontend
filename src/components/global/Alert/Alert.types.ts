@@ -1,21 +1,18 @@
-import Alert from './Alert';
-
 export enum AlertType {
-  DANGER = 'danger',
-  INFO = 'info',
+  ERROR = 'danger',
   NORMAL = 'normal',
   SUCCESS = 'success',
   WARNING = 'warning',
 }
 
-export const styles = {
+export const styles: Record<AlertType, Record<string, string>> = {
   [AlertType.NORMAL]: {
     container: 'bg-blue-100 rounded-lg dark:bg-blue-200',
     text: 'text-blue-700 dark:text-blue-800',
     button:
       'bg-blue-100 text-blue-500 rounded-lg focus:ring-2 focus:ring-blue-400 p-1.5 hover:bg-blue-200 inline-flex h-8 w-8 dark:bg-blue-200 dark:text-blue-600 dark:hover:bg-blue-300',
   },
-  [AlertType.DANGER]: {
+  [AlertType.ERROR]: {
     container: 'bg-red-100 rounded-lg dark:bg-red-200',
     text: 'text-red-700 dark:text-red-800',
     button:

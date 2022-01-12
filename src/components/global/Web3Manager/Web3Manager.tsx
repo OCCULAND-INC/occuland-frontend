@@ -20,7 +20,12 @@ function Web3Manager({ children }: Props) {
     ? (window.__WEB3_CONTEXT__ = context)
     : {};
 
-  console.error('Web3 manager error:', error);
+  error?.message &&
+    console.info(
+      '%c Web3Manager error: %s',
+      'background: #555; color: #FF6f00',
+      error?.message,
+    );
   console.info('%c Active: %s', 'background: #222; color: #bada55', active);
 
   const { activatingConnector, setActivatingConnector } =

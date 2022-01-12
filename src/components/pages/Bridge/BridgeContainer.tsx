@@ -10,7 +10,6 @@ function BridgeContainer() {
   const [isClicked, setIsClicked] = useState<boolean>(false);
 
   const handleClick = () => {
-    console.log('=====> clicked');
     setIsClicked(true);
   };
 
