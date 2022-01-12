@@ -1,43 +1,25 @@
 import { Web3Provider } from '@ethersproject/providers';
-import { AbstractConnector } from '@web3-react/abstract-connector';
 import { useWeb3React } from '@web3-react/core';
 import Image from 'next/image';
-import { useEffect, useState } from 'react';
 
 import Button from '~/components/global/Button/Button';
-import { useEagerConnect, useInactiveListener } from '~/hooks/connects';
+import { useWeb3ManagerContext } from '~/contexts/Web3Manager.context';
 import {
   ConnectorNames,
   CONNECTORS_WITH_INFO,
   ConnectorType,
 } from '~/lib/utils/connectors';
 
-function ConnectWallet() {
+interface Props {
+  onClick: () => void;
+}
+
+function ConnectWallet({ onClick }: Props) {
   const context = useWeb3React<Web3Provider>();
-  const {
-    connector,
-    // library,
-    // chainId,
-    // account,
-    activate,
-    // deactivate,
-    // active,
-    error,
-  } = context;
+  const { connector, activate, error } = context;
 
-  const [activatingConnector, setActivatingConnector] =
-    useState<AbstractConnector>();
-
-  // handle logic to eagerly connect to the injected ethereum provider, if it exists and has granted access already
-  const triedEager = useEagerConnect();
-  // handle logic to connect in reaction to certain events on the injected ethereum provider, if it exists
-  useInactiveListener(!triedEager || !!activatingConnector);
-
-  useEffect(() => {
-    if (activatingConnector && activatingConnector === connector) {
-      setActivatingConnector(undefined);
-    }
-  }, [activatingConnector, connector]);
+  const { activatingConnector, setActivatingConnector, triedEager } =
+    useWeb3ManagerContext();
 
   const handleConnect =
     (currentConnector: ConnectorType, name: ConnectorNames) => () => {
@@ -55,13 +37,17 @@ function ConnectWallet() {
         } = CONNECTORS_WITH_INFO[name as ConnectorNames];
         const activating = currentConnector === activatingConnector;
         const connected = currentConnector === connector;
-        const disabled =
-          !triedEager || !!activatingConnector || connected || !!error;
+        console.log('======>', triedEager, activatingConnector, error);
+        const disabled = !triedEager || !!activatingConnector || !!error;
 
         return (
           <Button
             key={name}
-            onClick={handleConnect(currentConnector, name as ConnectorNames)}
+            onClick={
+              connected
+                ? onClick
+                : handleConnect(currentConnector, name as ConnectorNames)
+            }
             disabled={disabled}
             className="flex justify-center items-center"
           >
