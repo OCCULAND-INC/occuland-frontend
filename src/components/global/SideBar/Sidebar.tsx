@@ -1,4 +1,3 @@
-import { BeakerIcon } from '@heroicons/react/solid';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
 
