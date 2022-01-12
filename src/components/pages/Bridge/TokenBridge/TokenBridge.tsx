@@ -60,9 +60,7 @@ function TokenBridge() {
           >
             To: Avalanche
           </label>
-          <Button onClick={handleClickBridge} aria-id="button-label">
-            Bridge Asset
-          </Button>
+          <Button onClick={handleClickBridge}>Bridge Asset</Button>
         </div>
       </div>
     </div>
