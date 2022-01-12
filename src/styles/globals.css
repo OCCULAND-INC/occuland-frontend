@@ -15,6 +15,13 @@ a {
   box-sizing: border-box;
 }
 
+.home-search-form > * {
+  margin: 10px;
+  width: 200px;
+}
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+
