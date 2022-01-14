@@ -5,7 +5,6 @@ import { useState } from 'react';
 import Calendar from 'react-calendar';
 
 import Button from '~/components/global/Button/Button';
-import Select from '~/components/global/Select/Select';
 import Input from '~/components/global/Input/Input';
 
 import { mockProducts } from '../Landmarket/items.mock';
@@ -14,9 +13,6 @@ import LandDetailModal from './LandDetailModal/LandDetailModal';
 function LandContainer() {
   const [value, onChange] = useState(new Date());
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-
-  const [platformSelection, setPlatformSelection] = useState<string>('0');
-  const [leaseType, setLeaseType] = useState<string>('0');
 
   const handleOpenModal = () => {
     setIsModalOpen(true);

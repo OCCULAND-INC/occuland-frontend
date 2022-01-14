@@ -8,6 +8,7 @@ interface Props {
 }
 
 function LandmarketDetailPage({ id }: Props) {
+  console.info('id', id);
   return <LandContainer />;
 }
 

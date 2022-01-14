@@ -16,8 +16,8 @@ function Web3Manager({ children }: Props) {
   const context = useWeb3React<Web3Provider>();
   const { connector, active, error } = context;
 
-  isBrowser() && !window.__WEB3_CONTEXT__
-    ? (window.__WEB3_CONTEXT__ = context)
+  isBrowser() && !window.__WEB3__CONTEXT__
+    ? (window.__WEB3__CONTEXT__ = context)
     : {};
 
   error?.message &&
