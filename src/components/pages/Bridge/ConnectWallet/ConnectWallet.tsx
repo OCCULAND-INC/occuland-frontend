@@ -50,9 +50,9 @@ function ConnectWallet({ onClick }: Props) {
                 : handleConnect(currentConnector, name as ConnectorNames)
             }
             disabled={disabled}
-            className="flex justify-center items-center"
+            className="flex justify-center items-center mb-5"
           >
-            {svg && <Image src={svg} />}
+            {svg && <Image src={svg} width={25} height={25} />}
             <span className="mx-5">{connectorName}</span>
             {activating && 'Connecting...'}
             {connected && (

@@ -40,7 +40,9 @@ function LandmarketContainer() {
               { text: 'Leased', value: '2' },
             ]}
           ></Select>
-          <Button className="mr-5">Search</Button>
+          <div className="flex items-end">
+            <Button>Search</Button>
+          </div>
         </div>
         <div className="gap-8 columns-3">
           {mockProducts.map(
