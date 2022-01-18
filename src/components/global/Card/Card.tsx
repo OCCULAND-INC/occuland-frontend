@@ -25,13 +25,13 @@ function Card({ imageUrl, title, subtitle, className }: Props) {
       </div>
       <div className="p-5">
         <div className="flex justify-between">
-          <p>Daily price</p>
+          <p>Daily Price</p>
           <p className="mb-3 font-bold tracking-tight text-gray-900 dark:text-white">
             {title}
           </p>
         </div>
         <div className="flex justify-between">
-          <p>Purchage</p>
+          <p>Purchase</p>
           <p className="mb-3 font-bold tracking-tight text-gray-900 dark:text-white">
             {subtitle}
           </p>
