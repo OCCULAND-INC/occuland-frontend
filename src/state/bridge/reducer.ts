@@ -12,7 +12,7 @@ const initState: TransferState = {
   ethBalance: '',
 };
 
-const reducer = createReducer(initState, (builder) =>
+export default createReducer(initState, (builder) =>
   builder
     .addCase(updateEthBalance, (state, action) => {
       state.ethBalance = action.payload.balance;
@@ -21,5 +21,3 @@ const reducer = createReducer(initState, (builder) =>
       // do something
     }),
 );
-
-export default reducer;
