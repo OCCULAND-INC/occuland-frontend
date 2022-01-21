@@ -12,10 +12,14 @@ function Sidebar() {
     router.push(href);
   };
 
+  const handleLogoClick = () => {
+    router.push('/');
+  };
+
   return (
-    <nav className="bg-gray-800 flex flex-col flex-shrink-0 h-screen items-center py-10 px-5 rounded-tr-4xl rounded-br-4xl shadow-2xl">
-      <div className="mb-8">
-        <Image src={Logo} width={100} height={100} />
+    <nav className="bg-gray-800 flex flex-col flex-shrink-0 h-screen items-center py-10 px-5 rounded-tr-4xl rounded-br-4xl shadow-2xl drop-shadow-2xl">
+      <div className="mb-8 cursor-pointer">
+        <Image src={Logo} width={120} height={120} onClick={handleLogoClick} />
       </div>
       <ul className="flex flex-col w-full">
         {ROUTES_MAP.map(({ href, title, icon }, index) => (
