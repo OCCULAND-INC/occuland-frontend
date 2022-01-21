@@ -14,12 +14,8 @@ function LandContainer() {
   const [value, onChange] = useState(new Date());
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
-  const handleOpenModal = () => {
-    setIsModalOpen(true);
-  };
-
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
+  const toggleModal = () => {
+    setIsModalOpen((prev) => !prev);
   };
 
   return (
@@ -32,19 +28,17 @@ function LandContainer() {
         </Button>
       </div>
       <div className="flex justify-center mt-5">
-        <div>
+        <div className="flex flex-col justify-center items-center">
           <Image
             src="https://picsum.photos/300/300"
-            className="rounded-lg mr-5"
+            className="rounded-lg mr-5 mb-5"
             alt="land image"
             height={400}
             width={400}
           />
         </div>
         <div className="ml-5">
-          <h5 className="text-xl mb-5" onClick={handleOpenModal}>
-            Plot size
-          </h5>
+          <h5 className="text-xl mb-5">Plot size</h5>
           <div className="flex justify-between mb-5">
             <p className="mr-5 text-xl">Daily price </p>
             <p className="font-bold text-gray-900 dark:text-white">
@@ -67,9 +61,9 @@ function LandContainer() {
         </div>
       </div>
       <div className="flex justify-center items-center">
-        <Button onClick={() => {}}>Request Rent</Button>
+        <Button onClick={toggleModal}>Request Rent</Button>
       </div>
-      <LandDetailModal isOpen={isModalOpen} onClose={handleCloseModal} />
+      <LandDetailModal isOpen={isModalOpen} onClose={toggleModal} />
     </div>
   );
 }
