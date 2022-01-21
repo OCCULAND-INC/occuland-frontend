@@ -13,7 +13,7 @@ function Sidebar() {
   };
 
   return (
-    <nav className="bg-white flex flex-col flex-shrink-0 h-screen items-center py-10 px-5 rounded-tr-4xl rounded-br-4xl shadow-2xl">
+    <nav className="bg-gray-800 flex flex-col flex-shrink-0 h-screen items-center py-10 px-5 rounded-tr-4xl rounded-br-4xl shadow-2xl">
       <div className="mb-8">
         <Image src={Logo} width={100} height={100} />
       </div>
@@ -22,7 +22,7 @@ function Sidebar() {
           <li
             key={index}
             onClick={handleClickRoute(href)}
-            className="flex text-gray-900 hover:text-gray-500 py-4 cursor-pointer items-center"
+            className="flex text-gray-100 hover:text-gray-500 py-4 cursor-pointer items-center"
           >
             {icon}
             <span>{title}</span>

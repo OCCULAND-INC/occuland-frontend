@@ -17,7 +17,7 @@ const styles = {
   [THEME.LIGHT]:
     'text-gray-900 bg-white border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:ring-blue-700 focus:text-blue-700',
   [THEME.DARK]:
-    'text-white bg-gray-800 text-gray-400 border-gray-600 hover:text-gray-200 hover:bg-gray-700',
+    'text-white bg-gray-800 border-gray-600 hover:text-gray-200 hover:bg-gray-700',
 };
 
 function Button({
