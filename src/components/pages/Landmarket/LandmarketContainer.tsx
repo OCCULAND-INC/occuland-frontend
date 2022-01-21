@@ -1,3 +1,4 @@
+import { useRouter } from 'next/router';
 import { useState } from 'react';
 
 import Button from '~/components/global/Button/Button';
@@ -13,6 +14,11 @@ import { mockProducts } from './items.mock';
 function LandmarketContainer() {
   const [platformSelection, setPlatformSelection] = useState<string>('0');
   const [leaseType, setLeaseType] = useState<string>('0');
+  const router = useRouter();
+
+  const handleClick = (id: number) => () => {
+    router.push(`/landmarket/${id}`);
+  };
 
   return (
     <div className="container mx-auto max-h-screen flex flex-col p-10 overflow-scroll">
@@ -52,7 +58,8 @@ function LandmarketContainer() {
                 title={price + priceUnit}
                 imageUrl={imageUrl}
                 subtitle={purchasePrice + priceUnit}
-                className="mb-5"
+                className="mb-5 cursor-pointer"
+                onClick={handleClick(index)}
               />
             ),
           )}

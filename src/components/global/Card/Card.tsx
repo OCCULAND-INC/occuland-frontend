@@ -4,16 +4,17 @@ import Image from 'next/image';
 interface Props {
   className?: string;
   imageUrl: string;
+  onClick: () => void;
   subtitle: string;
   title: string;
 }
 
-function Card({ imageUrl, title, subtitle, className }: Props) {
+function Card({ imageUrl, title, subtitle, className, onClick }: Props) {
   const containerCls =
     'max-w-sm bg-white rounded-lg border border-gray-200 shadow-md dark:bg-gray-800 dark:border-gray-700';
 
   return (
-    <div className={`${containerCls} ${className || ''}`}>
+    <div className={`${containerCls} ${className || ''}`} onClick={onClick}>
       <div className="w-full">
         <Image
           className="rounded-t-lg"
