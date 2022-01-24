@@ -7,9 +7,62 @@ import { Contract } from "@ethersproject/contracts";
 import { ethers, providers } from "ethers";
 import Land from '../../../../contracts/Land.json';
 import Occuland from '../../../../contracts/Occuland.json';
-import { Web3ManagerContextProvider } from '~/contexts/Web3Manager.context';
 import { text } from 'node:stream/consumers';
+import ClipLoader from "react-spinners/ClipLoader";
+import styled from '@emotion/styled';
 
+
+
+const LOADING_SCREEN = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgb(1,1,1, 0.8);
+  display: flex;
+  justify-content: center;
+  z-index: 1;
+`
+const ERROR_INDICATOR = styled.div`
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  width: 250px;
+  height: 50px;
+  border-radius: 10px;
+  box-shadow: 1px 2px 4px 1px grey;
+  background-color: #F4A8BE;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding: 10px;
+  &:hover {
+    cursor: pointer;
+  }
+  span {
+    text-align: center;
+    font-weight: bold;
+    color: black;
+    padding: 0px 10px;
+    width: 100%;
+  }
+  button {
+    border-left: solid 1px black;
+    font-weight: 900;
+    font-size: 20px;
+    width: 50px;
+  }
+`
+
+enum LOADING_STATE {
+  INIT = "INIT",
+  NTWRK_CHANGE = "NTWRK_CHANGE",
+  TXN_WAIT = "TXN_WAIT",
+  ERROR = "ERROR",
+  OFF = "OFF"
+}
 
 const getAllAssetsFromOwner = async (
     wallet_address:string, 
@@ -29,7 +82,7 @@ const getAllAssetsFromOwner = async (
     let res = await response.json();
     let x:any = await res.result.map((item:any) => ({text: item.token_id, value: item.token_id}));
     setAssets(x);
-    setLoading(false);
+    setLoading(LOADING_STATE.OFF);
   })
   .catch(err => {
     console.error(err);
@@ -64,8 +117,7 @@ const mockAssets: Array<SelectOption> = [
 
 function TokenBridge() {
   const context = useWeb3React<Web3Provider>();
-  const { connector, activate, error } = context;
-  let [loading, setLoading] = useState<boolean>(true);
+  let [loading, setLoading] = useState<LOADING_STATE>(LOADING_STATE.INIT);
   let [assets, setAssets] = useState<Array<SelectOption>>([]);
   let [contract, setContract] = useState<any>();
   let [abi, setAbi] = useState<any>(Land);
@@ -80,7 +132,7 @@ function TokenBridge() {
 
   useEffect(()=>{
     if(contractAddress){
-      getAllAssetsFromOwner(context.account ? context.account : '', contractAddress, selectedNetwork, setLoading, setAssets);
+      getAllAssetsFromOwner(context.account ? context.account : '', contractAddress, selectedNetwork, loadingMiddleman, setAssets);
     }
   }, [contractAddress]);
 
@@ -88,7 +140,15 @@ function TokenBridge() {
     setSelectedAsset(assets[0]);
   }, [assets])
 
-  async function connectToContract(val:any, abi:any, contractAddress:string){
+  const loadingMiddleman = async (state:LOADING_STATE) => {
+    if(state == LOADING_STATE.OFF){
+      setTimeout(()=> setLoading(state), 1000);
+    } else {
+      setLoading(state);
+    }
+  }
+
+  const connectToContract = async (val:any, abi:any, contractAddress:string) => {
     if(val.provider){
       let pr = new ethers.providers.Web3Provider(val.provider);
       let signer = pr.getSigner();
@@ -98,7 +158,7 @@ function TokenBridge() {
 
   const handleSelectNetwork = (option: SelectOption) => {
     console.info('selected option', option);
-    setLoading(true);
+    setLoading(LOADING_STATE.NTWRK_CHANGE);
     switch(option.text){
       case 'Ethereum': 
           setContractAddress('0x527d522aCe5AdFE80Dd4819186d5577a06f8Aa8a');
@@ -134,7 +194,7 @@ function TokenBridge() {
   };
 
   const bridgeAssetToAvax = async () => {
-    setLoading(true);
+    setLoading(LOADING_STATE.TXN_WAIT);
     try{
       let txn = await contract.transferFrom(
         context.account, 
@@ -144,20 +204,20 @@ function TokenBridge() {
       );
       let txnReceipt = await txn.wait();
       if(txnReceipt){
-        setLoading(false);
+        setLoading(LOADING_STATE.OFF);
       }
     } catch(e) {
-      setLoading(true);
+      setLoading(LOADING_STATE.ERROR);
       console.log(e);
     }
   }
   
-  if(loading){
-    return(<div>loading . . .</div>);
+  if(loading == LOADING_STATE.INIT){
+    return(<LOADING_SCREEN><LoadingSpinnerComponent message="Loading . . ."/></LOADING_SCREEN>);
   }
 
   return (
-    <div className="container mx-auto h-full flex flex-col justify-center items-center">
+    <div className="container mx-auto h-full flex flex-col justify-center items-center" style={{position:'relative'}}>
       <div className="p-6 w-96 max-w-sm bg-white rounded-lg border border-gray-200 shadow-md dark:bg-gray-800 dark:border-gray-700">
         <Select
           defaultValue={selectedNetwork}
@@ -179,11 +239,47 @@ function TokenBridge() {
           >
             To: {selectedNetwork == '0x3' ? 'Avalanche' : 'Ethereum'}
           </label>
-          <Button onClick={handleClickBridge}>Bridge Asset</Button>
+          <Button 
+            disabled={loading != 'OFF' ? true : false}
+            onClick={handleClickBridge}
+          >
+            Bridge Asset
+          </Button>
         </div>
       </div>
+      {loading == LOADING_STATE.TXN_WAIT && 
+        <LOADING_SCREEN><LoadingSpinnerComponent message='Confirming Transaction . . .' /></LOADING_SCREEN>
+      }
+      {loading == LOADING_STATE.NTWRK_CHANGE && 
+        <LOADING_SCREEN><LoadingSpinnerComponent message='Retrieving Your NFTs' /></LOADING_SCREEN>
+      }
+      {loading == LOADING_STATE.ERROR && 
+        <ERROR_INDICATOR onClick={()=> setLoading(LOADING_STATE.OFF)}>
+          <span>Loading Error</span>
+          <button>X</button>
+        </ERROR_INDICATOR>
+      }
     </div>
   );
 }
 
+function LoadingSpinnerComponent(props: {message:string}){
+  return(
+    <div style={{
+      display: 'flex',
+      flexDirection: 'column',
+      justifyContent: 'center',
+      alignItems: 'center',
+    }}>
+      <ClipLoader color={'#C39BD3'}  size={150} />
+      <span style={{
+        fontWeight: 'bold',
+        fontSize: '20px',
+        color: '#EFEDED'
+      }}>{props.message}</span>
+    </div>
+  )
+}
+
 export default TokenBridge;
+

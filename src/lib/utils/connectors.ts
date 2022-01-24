@@ -62,9 +62,9 @@ export const CONNECTORS_WITH_INFO: {
     connector: injected,
     svg: MetamaskIcon,
   },
-  [ConnectorNames.Network]: {
+  /*[ConnectorNames.Network]: {
     name: 'Network',
     connector: network,
     svg: null,
-  },
+  },*/
 };

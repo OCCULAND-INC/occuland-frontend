@@ -1,5 +1,6 @@
 import { Web3Provider } from '@ethersproject/providers';
 import { useWeb3React } from '@web3-react/core';
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
 
 import Alert from '~/components/global/Alert/Alert';
@@ -23,10 +24,26 @@ function ConnectWallet({ onClick }: Props) {
   const { activatingConnector, setActivatingConnector, triedEager } =
     useWeb3ManagerContext();
 
+
+  useEffect(() => {
+    if(context.account){
+      onClick();
+    }
+  }, [context.account]);
+
   const handleConnect =
-    (currentConnector: ConnectorType, name: ConnectorNames) => () => {
-      setActivatingConnector(currentConnector);
-      activate(CONNECTORS_WITH_INFO[name].connector);
+    (currentConnector: ConnectorType, name: ConnectorNames) => async () => {
+        try{
+        //@ts-ignore
+        await window.ethereum.request({
+          method: 'wallet_switchEthereumChain',
+          params: [{ chainId: '0x3' }],
+        });
+        setActivatingConnector(currentConnector);
+        activate(CONNECTORS_WITH_INFO[name].connector);
+      } catch(e){
+        console.log(e);
+      }
     };
 
   return (
@@ -45,21 +62,22 @@ function ConnectWallet({ onClick }: Props) {
           <Button
             key={name}
             onClick={
-              connected
+              connected && !disabled
                 ? onClick
                 : handleConnect(currentConnector, name as ConnectorNames)
             }
-            disabled={disabled}
+            
             className="flex justify-center items-center mb-5"
           >
             {svg && <Image src={svg} width={25} height={25} />}
             <span className="mx-5">{connectorName}</span>
             {activating && 'Connecting...'}
-            {connected && (
+            {connected && !disabled && (
               <span role="img" aria-label="check">
                 ✅
               </span>
             )}
+            
           </Button>
         );
       })}
