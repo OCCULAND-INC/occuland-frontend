@@ -71,6 +71,7 @@ const getAllAssetsFromOwner = async (
     setLoading:Function,
     setAssets:Function,
   ) => {
+    console.log(wallet_address)
   fetch(`https://deep-index.moralis.io/api/v2/${wallet_address}/nft/${contract_address}?chain=${chain}&format=decimal`, {
     "method": "GET",
     "headers": {
@@ -190,7 +191,13 @@ function TokenBridge() {
     } else {
       connectToContract(context.library, abi, contractAddress);
     }
-    bridgeAssetToAvax();
+
+    //@ts-ignore
+    if(context.chainId == '0xa869') {
+      bridgeAssetToAvax();
+    } else {
+      bridgeAssetToEth();
+    }
   };
 
   const bridgeAssetToAvax = async () => {
@@ -204,6 +211,24 @@ function TokenBridge() {
       );
       let txnReceipt = await txn.wait();
       if(txnReceipt){
+        setLoading(LOADING_STATE.OFF);
+      }
+    } catch(e) {
+      setLoading(LOADING_STATE.ERROR);
+      console.log(e);
+    }
+  }
+
+  const bridgeAssetToEth = async () => {
+    setLoading(LOADING_STATE.TXN_WAIT);
+    try{
+      let txn = await contract.bridgeBack(
+        //@ts-ignore
+        parseInt(selectedAsset.value), {value: 0}
+      );
+      let txnReceipt = await txn.wait();
+      if(txnReceipt){
+        console.log(txnReceipt);
         setLoading(LOADING_STATE.OFF);
       }
     } catch(e) {
@@ -233,17 +258,17 @@ function TokenBridge() {
           className="mb-5"
         />
         <div className="flex justify-center items-center">
-          <label
-            id="button-label"
-            className="block text-sm font-medium text-gray-700 mr-5 mb-2"
-          >
-            To: {selectedNetwork == '0x3' ? 'Avalanche' : 'Ethereum'}
-          </label>
           <Button 
             disabled={loading != 'OFF' ? true : false}
             onClick={handleClickBridge}
+            css={{width: '250px', display: 'flex'}}
           >
-            Bridge Asset
+            {
+              selectedNetwork == '0x3' ? 
+              <Network url={'https://www.pngall.com/wp-content/uploads/10/Avalanche-Crypto-Logo-PNG-Pic.png'} title='Avalanche' /> : 
+              <Network url={'https://www.pngall.com/wp-content/uploads/10/Ethereum-Logo-PNG-Image-HD.png'} title='Ethereum' /> 
+              
+            }
           </Button>
         </div>
       </div>
@@ -278,6 +303,32 @@ function LoadingSpinnerComponent(props: {message:string}){
         color: '#EFEDED'
       }}>{props.message}</span>
     </div>
+  )
+}
+
+function Network(props:{url:string, title:string}){
+  const COMP = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+  label {
+    padding-left: 5px;
+    color: white;
+  }
+  img {
+    padding-left: 5px;
+    height: 100%;
+  }
+  `
+  return(
+    <COMP>
+      <span>Bridge Asset to</span>
+      <img src={props.url}/>
+      <label>{props.title}</label>
+    </COMP>
   )
 }
 
