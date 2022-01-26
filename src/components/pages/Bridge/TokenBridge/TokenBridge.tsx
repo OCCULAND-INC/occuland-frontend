@@ -11,6 +11,9 @@ import { text } from 'node:stream/consumers';
 import ClipLoader from "react-spinners/ClipLoader";
 import styled from '@emotion/styled';
 
+//@ts-ignore
+import Identicon from 'react-identicons';
+
 
 
 const LOADING_SCREEN = styled.div`
@@ -125,21 +128,30 @@ function TokenBridge() {
   let [contractAddress, setContractAddress] = useState<string>("0x527d522aCe5AdFE80Dd4819186d5577a06f8Aa8a");
   let [selectedNetwork, setSelectedNetwork] = useState<string>('0x3');
   let [selectedAsset, setSelectedAsset] = useState<SelectOption>();
-
-
-  useEffect(() => {
-    connectToContract(context.library, abi, contractAddress);
-  },[]);
+  let [networkNeedsChange, setNetworkNeedsChange] = useState<boolean>();
+  let [LOADING_MESSAGE, SET_LOADING_MESSAGE] = useState<string>('');
 
   useEffect(()=>{
+    console.log(`contract address: ${contractAddress}`);
+    console.log(abi);
     if(contractAddress){
       getAllAssetsFromOwner(context.account ? context.account : '', contractAddress, selectedNetwork, loadingMiddleman, setAssets);
+      connectToContract(context.library, abi, contractAddress);
     }
-  }, [contractAddress]);
+  }, [contractAddress, abi]);
 
   useEffect(() => {
     setSelectedAsset(assets[0]);
-  }, [assets])
+  }, [assets]);
+
+  useEffect(() => {
+    //@ts-ignore
+    if(context.chainId != selectedNetwork){
+      setNetworkNeedsChange(true);
+    } else {
+      setNetworkNeedsChange(false);
+    }
+  }, [selectedNetwork, context.chainId])
 
   const loadingMiddleman = async (state:LOADING_STATE) => {
     if(state == LOADING_STATE.OFF){
@@ -156,7 +168,7 @@ function TokenBridge() {
       setContract(new ethers.Contract(contractAddress, abi.abi, signer));
     }
   }
-
+  
   const handleSelectNetwork = (option: SelectOption) => {
     console.info('selected option', option);
     setLoading(LOADING_STATE.NTWRK_CHANGE);
@@ -166,7 +178,7 @@ function TokenBridge() {
           setAbi(Land);
           break;
       case 'Avalanche': 
-          setContractAddress('0x8c92859593f3aaad5c5f078a50dca5b38cfa9528');
+          setContractAddress('0xC2Add3317E84E7F9EaA89f376b5e92585D6539fB');
           setAbi(Occuland);
           break;
       default:
@@ -182,26 +194,31 @@ function TokenBridge() {
   const handleClickBridge = async () => {
     //@ts-ignore
     if(context.chainId != selectedNetwork){
+      setLoading(LOADING_STATE.TXN_WAIT);
+      SET_LOADING_MESSAGE('Changing networks . . . ');
       //@ts-ignore
       await window.ethereum.request({
         method: 'wallet_switchEthereumChain',
         params: [{ chainId: selectedNetwork }],
       });
-      connectToContract(context.library, abi, contractAddress);
-    } else {
-      connectToContract(context.library, abi, contractAddress);
     }
-
-    //@ts-ignore
-    if(context.chainId == '0xa869') {
-      bridgeAssetToAvax();
-    } else {
-      bridgeAssetToEth();
-    }
+    setTimeout(() => brigeTo(), 3000);
   };
+  const brigeTo = async () => {
+      console.log(`THE CHAIN ID IS: ${context.chainId}`);
+      console.log(context.chainId);
+      SET_LOADING_MESSAGE('Confirming Transaction . . . ');
+      //@ts-ignore
+      if(selectedNetwork == '0x3') {
+        bridgeAssetToAvax();
+      } else {
+        bridgeAssetToEth();
+      }
+  }
 
   const bridgeAssetToAvax = async () => {
     setLoading(LOADING_STATE.TXN_WAIT);
+    console.log('bridgeAssetToAvax');
     try{
       let txn = await contract.transferFrom(
         context.account, 
@@ -221,6 +238,7 @@ function TokenBridge() {
 
   const bridgeAssetToEth = async () => {
     setLoading(LOADING_STATE.TXN_WAIT);
+    console.log('bridgeAssetToEth');
     try{
       let txn = await contract.bridgeBack(
         //@ts-ignore
@@ -235,6 +253,18 @@ function TokenBridge() {
       setLoading(LOADING_STATE.ERROR);
       console.log(e);
     }
+  }
+
+  const testMintLand = async () => {
+    await window.ethereum.request({
+      method: 'wallet_switchEthereumChain',
+      params: [{ chainId: '0x3' }],
+    });
+    setTimeout(async () => {
+      let res = await contract.mintLand();
+      let txnReceipt = await res.wait();
+      console.log(txnReceipt);
+    }, 3000);
   }
   
   if(loading == LOADING_STATE.INIT){
@@ -257,7 +287,13 @@ function TokenBridge() {
           onChange={handleSelectAssetId}
           className="mb-5"
         />
-        <div className="flex justify-center items-center">
+        <div style={{
+          paddingTop: '10px',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+          alignItems: 'center'
+        }}>
           <Button 
             disabled={loading != 'OFF' ? true : false}
             onClick={handleClickBridge}
@@ -270,10 +306,26 @@ function TokenBridge() {
               
             }
           </Button>
+          <label style={{
+            minHeight: '30px',
+            color: 'red'
+          }}>
+            {networkNeedsChange ? 'We will change networks first.' : ''}
+          </label>
+
         </div>
       </div>
+      <div style={{
+        position: 'absolute',
+        top:'10px',
+        right: '10px',
+        backgroundColor: 'red',
+        color: 'white'
+      }}>
+        <button onClick={testMintLand}>GET TESTNET LAND</button>
+      </div>
       {loading == LOADING_STATE.TXN_WAIT && 
-        <LOADING_SCREEN><LoadingSpinnerComponent message='Confirming Transaction . . .' /></LOADING_SCREEN>
+        <LOADING_SCREEN><LoadingSpinnerComponent message={LOADING_MESSAGE} /></LOADING_SCREEN>
       }
       {loading == LOADING_STATE.NTWRK_CHANGE && 
         <LOADING_SCREEN><LoadingSpinnerComponent message='Retrieving Your NFTs' /></LOADING_SCREEN>
@@ -284,6 +336,10 @@ function TokenBridge() {
           <button>X</button>
         </ERROR_INDICATOR>
       }
+      <div style={{position: 'absolute', top: '2px', left: '1px'}}>
+        <Address address={context.account || ''} />
+      </div>
+      
     </div>
   );
 }
@@ -330,6 +386,19 @@ function Network(props:{url:string, title:string}){
       <label>{props.title}</label>
     </COMP>
   )
+}
+
+function Address(props:{address:string}){
+  return(
+    <div style={{
+      display: 'flex',
+      flexDirection: 'row',
+      alignItems: 'center'
+    }}>
+      <Identicon string={props.address} size={30}/>
+      <label> Connected: {props.address.substring(0,6) + "..." + props.address.substring(36,42)}</label>
+    </div>
+  );
 }
 
 export default TokenBridge;
