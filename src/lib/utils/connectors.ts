@@ -44,10 +44,11 @@ export function getErrorMessage(error: Error) {
 
 export enum ConnectorNames {
   Injected = 'Injected',
-  Network = 'Network',
+  //Network = 'Network',
 }
 
 export type ConnectorType = InjectedConnector | NetworkConnector;
+
 interface ConnectorWithInfo {
   connector: ConnectorType;
   name: string;

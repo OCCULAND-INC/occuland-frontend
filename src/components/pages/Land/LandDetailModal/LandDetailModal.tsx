@@ -1,9 +1,14 @@
 import Button from '~/components/global/Button/Button';
 import Modal, { ModalProps } from '~/components/global/Modal/Modal';
 
-type Props = Omit<ModalProps, 'children'>;
+interface Coords extends ModalProps {
+  x: string;
+  y: string;
+}
 
-function LandDetailModal({ isOpen, onClose }: Props) {
+type Props = Omit<Coords, 'children'>;
+
+function LandDetailModal({ isOpen, onClose, x, y }: Props) {
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
       <div className="w-full grid grid-cols-1 gap-y-8 gap-x-6 items-start sm:grid-cols-12 lg:gap-x-8">
@@ -17,19 +22,21 @@ function LandDetailModal({ isOpen, onClose }: Props) {
             </h3>
             <table>
               <tr>
-                <th>Landing Renting</th>
-                <td className="pl-5">19, 6</td>
+                <th>Land Coordinates: </th>
+                <td className="pl-5">
+                  {x},{y}
+                </td>
               </tr>
               <tr>
-                <th>Time in </th>
+                <th>Time in: </th>
                 <td className="pl-5">December 20, 2021</td>
               </tr>
               <tr>
-                <th>Time out</th>
+                <th>Time out:</th>
                 <td className="pl-5">Decemeber 22, 2021</td>
               </tr>
               <tr>
-                <th>Number of days</th>
+                <th>Number of days:</th>
                 <td className="pl-5">4</td>
               </tr>
             </table>
@@ -50,7 +57,7 @@ function LandDetailModal({ isOpen, onClose }: Props) {
             </table>
           </section>
           <div className="flex justify-center mt-5">
-            <Button>Lease it</Button>
+            <Button>Pay Now</Button>
           </div>
         </div>
       </div>

@@ -2,7 +2,7 @@
 module.exports = {
   reactStrictMode: true,
   images: {
-    domains: ['picsum.photos'],
+    domains: ['picsum.photos', 'api.decentraland.org'],
   },
   env: {
     RPC_URL_1: process.env.RPC_URL_1,

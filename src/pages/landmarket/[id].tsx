@@ -5,19 +5,23 @@ import { getStringifiedParams } from '~/lib/utils/routes';
 
 interface Props {
   id: string;
+  x: string;
+  y: string;
 }
 
-function LandmarketDetailPage({ id }: Props) {
+function LandmarketDetailPage({ id, x, y }: Props) {
   console.info('id', id);
-  return <LandContainer />;
+  return <LandContainer x={x} y={y} />;
 }
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  const { id } = getStringifiedParams(context.query);
+  const { id, x, y } = getStringifiedParams(context.query);
 
   return {
     props: {
       id,
+      x,
+      y,
     },
   };
 };

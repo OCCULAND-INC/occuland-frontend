@@ -3,6 +3,7 @@ import { Web3Provider } from '@ethersproject/providers';
 import { useWeb3React } from '@web3-react/core';
 import { ethers } from 'ethers';
 import { useEffect, useState } from 'react';
+import ClipLoader from 'react-spinners/ClipLoader';
 
 import Button from '~/components/global/Button/Button';
 import Select, { SelectOption } from '~/components/global/Select/Select';
@@ -65,8 +66,8 @@ const getAllAssetsFromOwner = async (
   wallet_address: string,
   contract_address: string,
   chain: string,
-  setLoading: () => void,
-  setAssets: () => void,
+  setLoading: (e: LOADING_STATE) => void,
+  setAssets: (e: Array<SelectOption>) => void,
 ) => {
   fetch(
     `https://deep-index.moralis.io/api/v2/${wallet_address}/nft/${contract_address}?chain=${chain}&format=decimal`,
@@ -81,10 +82,12 @@ const getAllAssetsFromOwner = async (
   )
     .then(async (response) => {
       const res = await response.json();
-      const x: any = await res.result.map((item: any) => ({
-        text: item.token_id,
-        value: item.token_id,
-      }));
+      const x: Array<SelectOption> = await res.result.map(
+        (item: { token_id: string }) => ({
+          text: item.token_id,
+          value: item.token_id,
+        }),
+      );
       setAssets(x);
       setLoading(LOADING_STATE.OFF);
     })
@@ -104,7 +107,7 @@ const mockOptions: Array<SelectOption> = [
   },
 ];
 
-const mockAssets: Array<SelectOption> = [
+/*const mockAssets: Array<SelectOption> = [
   {
     value: '0xasd234sdf234234sdf',
     text: '0xasd234sdf234234sdf',
@@ -117,13 +120,15 @@ const mockAssets: Array<SelectOption> = [
     value: '0xbbb234sdf234234sdf',
     text: '0xbbb234sdf234234sdf',
   },
-];
+];*/
 
 function TokenBridge() {
   const context = useWeb3React<Web3Provider>();
   const [loading, setLoading] = useState<LOADING_STATE>(LOADING_STATE.INIT);
   const [assets, setAssets] = useState<Array<SelectOption>>([]);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [contract, setContract] = useState<any>();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [abi, setAbi] = useState<any>(Land);
   const [contractAddress, setContractAddress] = useState<string>(
     '0x527d522aCe5AdFE80Dd4819186d5577a06f8Aa8a',
@@ -134,8 +139,6 @@ function TokenBridge() {
   const [LOADING_MESSAGE, SET_LOADING_MESSAGE] = useState<string>('');
 
   useEffect(() => {
-    console.log(`contract address: ${contractAddress}`);
-    console.log(abi);
     if (contractAddress) {
       getAllAssetsFromOwner(
         context.account ? context.account : '',
@@ -153,8 +156,7 @@ function TokenBridge() {
   }, [assets]);
 
   useEffect(() => {
-    //@ts-ignore
-    if (context.chainId != selectedNetwork) {
+    if (context.chainId?.toString() != selectedNetwork) {
       setNetworkNeedsChange(true);
     } else {
       setNetworkNeedsChange(false);
@@ -170,7 +172,9 @@ function TokenBridge() {
   };
 
   const connectToContract = async (
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     val: any,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     abi: any,
     contractAddress: string,
   ) => {
@@ -203,23 +207,18 @@ function TokenBridge() {
   };
 
   const handleClickBridge = async () => {
-    //@ts-ignore
-    if (context.chainId != selectedNetwork) {
+    if (context.chainId?.toString() != selectedNetwork) {
       setLoading(LOADING_STATE.TXN_WAIT);
       SET_LOADING_MESSAGE('Changing networks . . . ');
-      //@ts-ignore
       await window.ethereum.request({
         method: 'wallet_switchEthereumChain',
         params: [{ chainId: selectedNetwork }],
       });
     }
-    setTimeout(() => brigeTo(), 3000);
+    brigeTo();
   };
   const brigeTo = async () => {
-    console.log(`THE CHAIN ID IS: ${context.chainId}`);
-    console.log(context.chainId);
     SET_LOADING_MESSAGE('Confirming Transaction . . . ');
-    //@ts-ignore
     if (selectedNetwork == '0x3') {
       bridgeAssetToAvax();
     } else {
@@ -229,13 +228,11 @@ function TokenBridge() {
 
   const bridgeAssetToAvax = async () => {
     setLoading(LOADING_STATE.TXN_WAIT);
-    console.log('bridgeAssetToAvax');
     try {
       const txn = await contract.transferFrom(
         context.account,
         '0xb92bC1F5456e1E7B2971450D36FD2eBE73eeF70B',
-        //@ts-ignore
-        parseInt(selectedAsset.value),
+        parseInt(selectedAsset?.value || '0'),
         { value: 0 },
       );
       const txnReceipt = await txn.wait();
@@ -244,27 +241,22 @@ function TokenBridge() {
       }
     } catch (e) {
       setLoading(LOADING_STATE.ERROR);
-      console.log(e);
     }
   };
 
   const bridgeAssetToEth = async () => {
     setLoading(LOADING_STATE.TXN_WAIT);
-    console.log('bridgeAssetToEth');
     try {
       const txn = await contract.bridgeBack(
-        //@ts-ignore
-        parseInt(selectedAsset.value),
+        parseInt(selectedAsset?.value || '0'),
         { value: 0 },
       );
       const txnReceipt = await txn.wait();
       if (txnReceipt) {
-        console.log(txnReceipt);
         setLoading(LOADING_STATE.OFF);
       }
     } catch (e) {
       setLoading(LOADING_STATE.ERROR);
-      console.log(e);
     }
   };
 
@@ -275,8 +267,7 @@ function TokenBridge() {
     });
     setTimeout(async () => {
       const res = await contract.mintLand();
-      const txnReceipt = await res.wait();
-      console.log(txnReceipt);
+      await res.wait();
     }, 3000);
   };
 
@@ -309,11 +300,11 @@ function TokenBridge() {
         />
         <div
           style={{
-            paddingTop: '10px',
+            alignItems: 'center',
             display: 'flex',
             flexDirection: 'column',
             justifyContent: 'center',
-            alignItems: 'center',
+            paddingTop: '10px',
           }}
         >
           <Button
@@ -349,11 +340,11 @@ function TokenBridge() {
       </div>
       <div
         style={{
-          position: 'absolute',
-          top: '10px',
-          right: '10px',
           backgroundColor: 'red',
           color: 'white',
+          position: 'absolute',
+          right: '10px',
+          top: '10px',
         }}
       >
         <button onClick={testMintLand}>GET TESTNET LAND</button>
@@ -375,7 +366,7 @@ function TokenBridge() {
         </ERROR_INDICATOR>
       )}
       <div style={{ position: 'absolute', top: '2px', left: '1px' }}>
-        <Address address={context.account || ''} />
+        <Address address={ethers.utils.getAddress(context?.account || '')} />
       </div>
     </div>
   );
@@ -440,7 +431,7 @@ function Address(props: { address: string }) {
         alignItems: 'center',
       }}
     >
-      <Identicon string={props.address} size={30} />
+      {/*<Identicon value={props.address} size={32} />*/}
       <label>
         {' '}
         Connected:{' '}

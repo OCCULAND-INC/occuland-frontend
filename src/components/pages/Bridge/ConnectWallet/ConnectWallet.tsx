@@ -39,9 +39,8 @@ function ConnectWallet({ onClick }: Props) {
         });
         setActivatingConnector(currentConnector);
         activate(CONNECTORS_WITH_INFO[name].connector);
-      } catch (e) {
-        console.error(e);
-      }
+        // eslint-disable-next-line no-empty
+      } catch (e) {}
     };
 
   return (

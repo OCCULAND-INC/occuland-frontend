@@ -12,12 +12,22 @@ import { mockProducts } from './items.mock';
  */
 
 function LandmarketContainer() {
-  const [platformSelection, setPlatformSelection] = useState<string>('0');
-  const [leaseType, setLeaseType] = useState<string>('0');
   const router = useRouter();
+  const [platformSelection, setPlatformSelection] = useState<string>(
+    (router.query.platform as string) || 'all',
+  );
+  const [leaseType, setLeaseType] = useState<string>('0');
 
-  const handleClick = (id: number) => () => {
-    router.push(`/landmarket/${id}`);
+  console.info(router.query.platform || 'none');
+
+  const handleClick = (id: number, coords: { x: number; y: number }) => () => {
+    router.push({
+      pathname: `/landmarket/${id}`,
+      query: {
+        x: coords.x,
+        y: coords.y,
+      },
+    });
   };
 
   return (
@@ -31,9 +41,9 @@ function LandmarketContainer() {
               setPlatformSelection(e.value != '0' ? e.value : platformSelection)
             }
             options={[
-              { text: 'All', value: '0' },
-              { text: 'Decentraland', value: '1' },
-              { text: 'The Sandbox', value: '2' },
+              { text: 'All', value: 'all' },
+              { text: 'Decentraland', value: 'decentraland' },
+              { text: 'The Sandbox', value: 'the sandbox' },
             ]}
           ></Select>
           <Select
@@ -52,14 +62,16 @@ function LandmarketContainer() {
         </div>
         <div className="gap-8 columns-3">
           {mockProducts.map(
-            ({ imageUrl, price, priceUnit, purchasePrice, title }, index) => (
+            ({ price, priceUnit, purchasePrice, title }, index) => (
               <Card
                 key={title + index}
                 title={price + priceUnit}
-                imageUrl={imageUrl}
+                imageUrl={`https://api.decentraland.org/v1/parcels/${
+                  index * 6
+                }/${index * 9}/map.png`}
                 subtitle={purchasePrice + priceUnit}
                 className="mb-5 cursor-pointer"
-                onClick={handleClick(index)}
+                onClick={handleClick(index, { x: index * 6, y: index * 9 })}
               />
             ),
           )}

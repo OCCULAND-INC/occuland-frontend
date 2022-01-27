@@ -5,12 +5,14 @@ import { useState } from 'react';
 import Calendar from 'react-calendar';
 
 import Button from '~/components/global/Button/Button';
-import Input from '~/components/global/Input/Input';
+import Select from '~/components/global/Select/Select';
 
 import { mockProducts } from '../Landmarket/items.mock';
 import LandDetailModal from './LandDetailModal/LandDetailModal';
 
-function LandContainer() {
+function LandContainer(_props: { x: string; y: string }) {
+  const [platformSelection, setPlatformSelection] = useState<string>('0');
+  const [leaseType, setLeaseType] = useState<string>('0');
   const [value, onChange] = useState(new Date());
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
@@ -21,16 +23,38 @@ function LandContainer() {
   return (
     <div className="container mx-auto max-h-screen flex flex-col p-10 overflow-scroll">
       <div>
-        <Input placeholder="Platform" className="mr-5" />
-        <Input placeholder="Lease" className="mr-5" />
-        <Button className="mr-5" onClick={() => {}}>
-          Availablity
-        </Button>
+        <div className="flex home-search-form">
+          <Select
+            label="Platform:"
+            defaultValue={platformSelection}
+            onChange={(e) =>
+              setPlatformSelection(e.value != '0' ? e.value : platformSelection)
+            }
+            options={[
+              { text: 'All', value: '0' },
+              { text: 'Decentraland', value: '1' },
+              { text: 'The Sandbox', value: '2' },
+            ]}
+          ></Select>
+          <Select
+            label="Availability:"
+            defaultValue={leaseType}
+            onChange={(e) => setLeaseType(e.value != '0' ? e.value : leaseType)}
+            options={[
+              { text: 'All', value: '0' },
+              { text: 'Available', value: '1' },
+              { text: 'Leased', value: '2' },
+            ]}
+          ></Select>
+          <div className="flex items-end">
+            <Button>Search</Button>
+          </div>
+        </div>
       </div>
       <div className="flex justify-center mt-5">
         <div className="flex flex-col justify-center items-center">
           <Image
-            src="https://picsum.photos/300/300"
+            src={`https://api.decentraland.org/v1/parcels/${_props.x}/${_props.y}/map.png`}
             className="rounded-lg mr-5 mb-5"
             alt="land image"
             height={400}
@@ -61,9 +85,14 @@ function LandContainer() {
         </div>
       </div>
       <div className="flex justify-center items-center">
-        <Button onClick={toggleModal}>Request Rent</Button>
+        <Button onClick={toggleModal}>Request to Rent</Button>
       </div>
-      <LandDetailModal isOpen={isModalOpen} onClose={toggleModal} />
+      <LandDetailModal
+        isOpen={isModalOpen}
+        onClose={toggleModal}
+        x={_props.x}
+        y={_props.y}
+      />
     </div>
   );
 }
