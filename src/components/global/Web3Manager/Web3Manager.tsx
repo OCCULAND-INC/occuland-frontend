@@ -26,7 +26,7 @@ function Web3Manager({ children }: Props) {
       'background: #555; color: #FF6f00',
       error?.message,
     );
-  console.info('%c Active: %s', 'background: #222; color: #bada55', active);
+  console.info('%c Active: %s', 'background: #222; color: #bada55', active, 'connector', connector);
 
   const { activatingConnector, setActivatingConnector } =
     useWeb3ManagerContext();

@@ -8,7 +8,6 @@ import TokenBridge from './TokenBridge/TokenBridge';
 function BridgeContainer() {
   const { connector } = useWeb3React<Web3Provider>();
   const [isClicked, setIsClicked] = useState<boolean>(false);
-
   const handleClick = () => {
     setIsClicked(true);
   };
