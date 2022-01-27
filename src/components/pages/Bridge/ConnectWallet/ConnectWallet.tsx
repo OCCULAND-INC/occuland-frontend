@@ -1,7 +1,7 @@
 import { Web3Provider } from '@ethersproject/providers';
 import { useWeb3React } from '@web3-react/core';
-import { useState, useEffect } from 'react';
 import Image from 'next/image';
+import { useEffect } from 'react';
 
 import Alert from '~/components/global/Alert/Alert';
 import { AlertType } from '~/components/global/Alert/Alert.types';
@@ -24,25 +24,23 @@ function ConnectWallet({ onClick }: Props) {
   const { activatingConnector, setActivatingConnector, triedEager } =
     useWeb3ManagerContext();
 
-
   useEffect(() => {
-    if(context.account){
+    if (context.account) {
       onClick();
     }
   }, [context.account]);
 
   const handleConnect =
     (currentConnector: ConnectorType, name: ConnectorNames) => async () => {
-        try{
-        //@ts-ignore
+      try {
         await window.ethereum.request({
           method: 'wallet_switchEthereumChain',
           params: [{ chainId: '0x3' }],
         });
         setActivatingConnector(currentConnector);
         activate(CONNECTORS_WITH_INFO[name].connector);
-      } catch(e){
-        console.log(e);
+      } catch (e) {
+        console.error(e);
       }
     };
 
@@ -66,7 +64,6 @@ function ConnectWallet({ onClick }: Props) {
                 ? onClick
                 : handleConnect(currentConnector, name as ConnectorNames)
             }
-            
             className="flex justify-center items-center mb-5"
           >
             {svg && <Image src={svg} width={25} height={25} />}
@@ -77,7 +74,6 @@ function ConnectWallet({ onClick }: Props) {
                 ✅
               </span>
             )}
-            
           </Button>
         );
       })}

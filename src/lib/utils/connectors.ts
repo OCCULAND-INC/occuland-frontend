@@ -12,6 +12,7 @@ import MetamaskIcon from '~/assets/wallets/metamask.svg';
 
 const RPC_URLS: { [chainId: number]: string } = {
   1: process.env.RPC_URL_1 as string,
+  3: process.env.RPC_URL_1 as string,
   4: process.env.RPC_URL_4 as string,
 };
 
@@ -20,8 +21,8 @@ export const injected = new InjectedConnector({
 });
 
 export const network = new NetworkConnector({
-  urls: { 1: RPC_URLS[1], 4: RPC_URLS[4] },
-  defaultChainId: 1,
+  urls: { 1: RPC_URLS[1], 3: RPC_URLS[3], 4: RPC_URLS[4] },
+  defaultChainId: 3, // for testing purpose
 });
 
 export function getErrorMessage(error: Error) {
@@ -62,9 +63,9 @@ export const CONNECTORS_WITH_INFO: {
     connector: injected,
     svg: MetamaskIcon,
   },
-  /*[ConnectorNames.Network]: {
+  [ConnectorNames.Network]: {
     name: 'Network',
     connector: network,
     svg: null,
-  },*/
+  },
 };
