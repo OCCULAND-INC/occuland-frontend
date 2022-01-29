@@ -7,6 +7,8 @@ import ClipLoader from 'react-spinners/ClipLoader';
 
 import Button from '~/components/global/Button/Button';
 import Select, { SelectOption } from '~/components/global/Select/Select';
+import { addAssetToWaitCheker } from '~/state/polling/actions';
+import { store } from '~/state/store';
 
 import Land from '../../../../contracts/Land.json';
 import Occuland from '../../../../contracts/Occuland.json';
@@ -271,6 +273,12 @@ function TokenBridge() {
     }, 3000);
   };
 
+  const checkBridgeAssetStatus = async () => {
+    // eslint-disable-next-line no-console
+    console.log('click');
+    store.dispatch(addAssetToWaitCheker(context.account || '', '1'));
+  };
+
   if (loading == LOADING_STATE.INIT) {
     return (
       <LOADING_SCREEN>
@@ -280,10 +288,7 @@ function TokenBridge() {
   }
 
   return (
-    <div
-      className="container mx-auto h-full flex flex-col justify-center items-center"
-      style={{ position: 'relative' }}
-    >
+    <div className="container mx-auto h-full flex flex-col justify-center items-center">
       <div className="p-6 w-96 max-w-sm bg-white rounded-lg border border-gray-200 shadow-md dark:bg-gray-800 dark:border-gray-700">
         <Select
           defaultValue={selectedNetwork}
@@ -336,6 +341,7 @@ function TokenBridge() {
           >
             {networkNeedsChange ? 'We will change networks first.' : ''}
           </label>
+          <button onClick={() => checkBridgeAssetStatus()}>test</button>
         </div>
       </div>
       <div
