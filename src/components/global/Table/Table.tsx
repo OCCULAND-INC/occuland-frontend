@@ -14,14 +14,52 @@ function TableRow(props: { data: Data }) {
   return (
     <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
       <td className="py-4 px-6 text-sm font-medium text-gray-500 whitespace-nowrap dark:text-white">
-        {props.data.address.substring(0, 6) +
-          '...' +
-          props.data.address.substring(36, 42)}
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'row',
+          }}
+        >
+          <img
+            style={{
+              height: '20px',
+              width: '16px',
+              marginRight: '5px',
+            }}
+            src={
+              props.data.type == 'out'
+                ? 'https://www.pngall.com/wp-content/uploads/10/Avalanche-Crypto-Logo-PNG-Pic.png'
+                : 'https://www.pngall.com/wp-content/uploads/10/Ethereum-Logo-PNG-Image-HD.png'
+            }
+          />
+          {props.data.address.substring(0, 6) +
+            '...' +
+            props.data.address.substring(36, 42)}
+        </div>
       </td>
       <td className="py-4 px-6 text-sm font-medium text-gray-500 whitespace-nowrap dark:text-white">
-        {props.data.address.substring(0, 6) +
-          '...' +
-          props.data.address.substring(36, 42)}
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'row',
+          }}
+        >
+          <img
+            style={{
+              height: '20px',
+              width: '16px',
+              marginRight: '5px',
+            }}
+            src={
+              props.data.type == 'out'
+                ? 'https://www.pngall.com/wp-content/uploads/10/Ethereum-Logo-PNG-Image-HD.png'
+                : 'https://www.pngall.com/wp-content/uploads/10/Avalanche-Crypto-Logo-PNG-Pic.png'
+            }
+          />
+          {props.data.address.substring(0, 6) +
+            '...' +
+            props.data.address.substring(36, 42)}
+        </div>
       </td>
       <td className="py-4 px-6 text-sm text-gray-500 whitespace-nowrap dark:text-gray-400">
         {props.data.assetId}
