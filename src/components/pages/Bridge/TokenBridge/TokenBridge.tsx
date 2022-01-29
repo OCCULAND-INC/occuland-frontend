@@ -344,6 +344,8 @@ function TokenBridge() {
           <button onClick={() => checkBridgeAssetStatus()}>test</button>
         </div>
       </div>
+      {/*
+      Button to get testnet land.
       <div
         style={{
           backgroundColor: 'red',
@@ -354,7 +356,7 @@ function TokenBridge() {
         }}
       >
         <button onClick={testMintLand}>GET TESTNET LAND</button>
-      </div>
+      </div>*/}
       {loading == LOADING_STATE.TXN_WAIT && (
         <LOADING_SCREEN>
           <LoadingSpinnerComponent message={LOADING_MESSAGE} />
@@ -371,9 +373,11 @@ function TokenBridge() {
           <button>X</button>
         </ERROR_INDICATOR>
       )}
+      {/* Address is shown in button header, otherwise the bottom block can help
+      to display to the user, what current account it connected.
       <div style={{ position: 'absolute', top: '2px', left: '1px' }}>
         <Address address={ethers.utils.getAddress(context?.account || '')} />
-      </div>
+      </div>*/}
     </div>
   );
 }

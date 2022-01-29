@@ -45,22 +45,7 @@ function App({ children }: Props) {
               >
                 <ErrorNotification />
               </div>
-              <div
-                style={{
-                  alignItems: 'center',
-                  //backgroundColor: 'rgb(1,1,1,0.5)',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  height: '100%',
-                  justifyContent: 'flex-start',
-                  overflow: 'scroll',
-                  paddingTop: '100px',
-                  position: 'absolute',
-                  width: '100%',
-                }}
-              >
-                <BridgeWaitingTable />
-              </div>
+              <BridgeWaitingTable />
             </div>
           </div>
         </Web3Manager>
@@ -101,5 +86,26 @@ function BridgeWaitingTable() {
   const isOpen = useSelector(
     (state: any) => state.toggleElementsReducer.isOpen,
   );
-  return <>{!isOpen && <Table />}</>;
+  return (
+    <>
+      {isOpen && (
+        <div
+          style={{
+            alignItems: 'center',
+            backgroundColor: 'rgb(1,1,1,0.5)',
+            display: 'flex',
+            flexDirection: 'column',
+            height: '100%',
+            justifyContent: 'flex-start',
+            overflow: 'scroll',
+            paddingTop: '100px',
+            position: 'absolute',
+            width: '100%',
+          }}
+        >
+          <Table />
+        </div>
+      )}
+    </>
+  );
 }
