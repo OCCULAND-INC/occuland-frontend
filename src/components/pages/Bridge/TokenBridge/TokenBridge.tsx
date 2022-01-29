@@ -2,6 +2,7 @@ import styled from '@emotion/styled';
 import { Web3Provider } from '@ethersproject/providers';
 import { useWeb3React } from '@web3-react/core';
 import { ethers } from 'ethers';
+import { stringify } from 'querystring';
 import { useEffect, useState } from 'react';
 import ClipLoader from 'react-spinners/ClipLoader';
 
@@ -109,6 +110,11 @@ const mockOptions: Array<SelectOption> = [
   },
 ];
 
+const chainIds: any = {
+  '0x3': 3,
+  '0xa869': 43113,
+};
+
 /*const mockAssets: Array<SelectOption> = [
   {
     value: '0xasd234sdf234234sdf',
@@ -158,7 +164,9 @@ function TokenBridge() {
   }, [assets]);
 
   useEffect(() => {
-    if (context.chainId?.toString() != selectedNetwork) {
+    // eslint-disable-next-line no-console
+    console.log(context);
+    if (context.chainId?.toString() != chainIds[selectedNetwork]) {
       setNetworkNeedsChange(true);
     } else {
       setNetworkNeedsChange(false);
@@ -239,6 +247,12 @@ function TokenBridge() {
       );
       const txnReceipt = await txn.wait();
       if (txnReceipt) {
+        checkBridgeAssetStatus(
+          context.account?.toString() || '',
+          '0xb92bC1F5456e1E7B2971450D36FD2eBE73eeF70B',
+          selectedAsset?.value || '0',
+          'out',
+        );
         setLoading(LOADING_STATE.OFF);
       }
     } catch (e) {
@@ -255,6 +269,12 @@ function TokenBridge() {
       );
       const txnReceipt = await txn.wait();
       if (txnReceipt) {
+        checkBridgeAssetStatus(
+          context.account?.toString() || '',
+          contractAddress,
+          selectedAsset?.value || '0',
+          'in',
+        );
         setLoading(LOADING_STATE.OFF);
       }
     } catch (e) {
@@ -262,7 +282,7 @@ function TokenBridge() {
     }
   };
 
-  const testMintLand = async () => {
+  /*const testMintLand = async () => {
     await window.ethereum.request({
       method: 'wallet_switchEthereumChain',
       params: [{ chainId: '0x3' }],
@@ -271,12 +291,15 @@ function TokenBridge() {
       const res = await contract.mintLand();
       await res.wait();
     }, 3000);
-  };
+  };*/
 
-  const checkBridgeAssetStatus = async () => {
-    // eslint-disable-next-line no-console
-    console.log('click');
-    store.dispatch(addAssetToWaitCheker(context.account || '', '1'));
+  const checkBridgeAssetStatus = async (
+    from: string,
+    to: string,
+    id: string,
+    type: string,
+  ) => {
+    store.dispatch(addAssetToWaitCheker(from, to, id, type));
   };
 
   if (loading == LOADING_STATE.INIT) {
@@ -341,7 +364,6 @@ function TokenBridge() {
           >
             {networkNeedsChange ? 'We will change networks first.' : ''}
           </label>
-          <button onClick={() => checkBridgeAssetStatus()}>test</button>
         </div>
       </div>
       {/*

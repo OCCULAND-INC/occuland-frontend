@@ -28,8 +28,8 @@ function TableRow(props: { data: Data }) {
             }}
             src={
               props.data.type == 'out'
-                ? 'https://www.pngall.com/wp-content/uploads/10/Avalanche-Crypto-Logo-PNG-Pic.png'
-                : 'https://www.pngall.com/wp-content/uploads/10/Ethereum-Logo-PNG-Image-HD.png'
+                ? 'https://www.pngall.com/wp-content/uploads/10/Ethereum-Logo-PNG-Image-HD.png'
+                : 'https://www.pngall.com/wp-content/uploads/10/Avalanche-Crypto-Logo-PNG-Pic.png'
             }
           />
           {props.data.address.substring(0, 6) +
@@ -52,8 +52,8 @@ function TableRow(props: { data: Data }) {
             }}
             src={
               props.data.type == 'out'
-                ? 'https://www.pngall.com/wp-content/uploads/10/Ethereum-Logo-PNG-Image-HD.png'
-                : 'https://www.pngall.com/wp-content/uploads/10/Avalanche-Crypto-Logo-PNG-Pic.png'
+                ? 'https://www.pngall.com/wp-content/uploads/10/Avalanche-Crypto-Logo-PNG-Pic.png'
+                : 'https://www.pngall.com/wp-content/uploads/10/Ethereum-Logo-PNG-Image-HD.png'
             }
           />
           {props.data.address.substring(0, 6) +

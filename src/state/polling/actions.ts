@@ -1,6 +1,11 @@
-export function addAssetToWaitCheker(address: string, assetId: string) {
+export function addAssetToWaitCheker(
+  from: string,
+  to: string,
+  assetId: string,
+  type: string,
+) {
   return {
     type: 'WAIT_ON_DATA',
-    data: { address, assetId },
+    data: { from, to, assetId, type },
   };
 }
