@@ -19,11 +19,7 @@ const initState: any = [];
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function assetCheckReducer(state = initState, action: any) {
   const { data } = action;
-  // eslint-disable-next-line no-console
-  console.log(action);
   if (action.type == 'WAIT_ON_DATA') {
-    // eslint-disable-next-line no-console
-    console.log(state);
     return [...state, data];
   }
 
