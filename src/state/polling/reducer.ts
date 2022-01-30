@@ -3,8 +3,7 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 export const statusApi = createApi({
   reducerPath: 'statusApi',
   baseQuery: fetchBaseQuery({
-    baseUrl:
-      'https://9e8b-2603-7000-4500-8400-f84d-3e27-adfe-7776.ngrok.io/status?',
+    baseUrl: 'https://occ-bridge.herokuapp.com/status?',
   }),
   endpoints: (builder) => ({
     getStatus: builder.query({
