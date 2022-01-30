@@ -3,9 +3,11 @@ export function addAssetToWaitCheker(
   to: string,
   assetId: string,
   type: string,
+  hash: string,
 ) {
   return {
     type: 'WAIT_ON_DATA',
-    data: { from, to, assetId, type },
+    // eslint-disable-next-line sort-keys
+    data: { from, to, assetId, type, hash },
   };
 }

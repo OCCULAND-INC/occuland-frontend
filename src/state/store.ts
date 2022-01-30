@@ -2,7 +2,7 @@ import { configureStore } from '@reduxjs/toolkit';
 
 import bridge from './bridge/reducer';
 import errorReducer from './error/reducer';
-import assetCheckReducer, { pokemonApi } from './polling/reducer';
+import assetCheckReducer, { statusApi } from './polling/reducer';
 import toggleElementsReducer from './utils/reducer';
 
 export type RootState = ReturnType<typeof store.getState>;
@@ -14,8 +14,8 @@ export const store = configureStore({
     bridge,
     errorReducer,
     toggleElementsReducer,
-    [pokemonApi.reducerPath]: pokemonApi.reducer,
+    [statusApi.reducerPath]: statusApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat(pokemonApi.middleware),
+    getDefaultMiddleware().concat(statusApi.middleware),
 });

@@ -82,8 +82,8 @@ function ErrorNotification() {
 }
 
 function BridgeWaitingTable() {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const isOpen = useSelector(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (state: any) => state.toggleElementsReducer.isOpen,
   );
   return (

@@ -1,15 +1,17 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
-export const pokemonApi = createApi({
-  reducerPath: 'pokemonApi',
-  baseQuery: fetchBaseQuery({ baseUrl: 'https://pokeapi.co/api/v2/' }),
+export const statusApi = createApi({
+  reducerPath: 'statusApi',
+  baseQuery: fetchBaseQuery({
+    baseUrl:
+      'https://9e8b-2603-7000-4500-8400-f84d-3e27-adfe-7776.ngrok.io/status?',
+  }),
   endpoints: (builder) => ({
-    getPokemonByName: builder.query({
-      query: () => 'pokemon/bulbasaur',
-    }),
-    getPokemonById: builder.query({
-      // eslint-disable-next-line no-console
-      query: (name: string) => `/${name}`,
+    getStatus: builder.query({
+      query: (params: string[]) => ({
+        url: `address=${params[0]}&hash=${params[2]}&assetId=${params[1]}`,
+        responseHandler: (response) => response.text(),
+      }),
     }),
   }),
 });
@@ -27,5 +29,5 @@ export function assetCheckReducer(state = initState, action: any) {
 }
 
 // Export hooks for usage in functional components
-export const { useGetPokemonByNameQuery, useGetPokemonByIdQuery } = pokemonApi;
+export const { useGetStatusQuery } = statusApi;
 export default assetCheckReducer;

@@ -7,8 +7,7 @@ const initState = {
 
 export default function errorReducer(state = initState, action: any) {
   const { error } = action;
-
-  if (typeof error === 'object' && error) {
+  if (typeof error === 'object' && error && error.name != 'ConditionError') {
     const error_msg = error.message;
     return {
       error: error_msg,

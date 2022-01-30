@@ -1,16 +1,20 @@
 import styled from '@emotion/styled';
 import { useSelector } from 'react-redux';
-import ClipLoader from 'react-spinners/ClipLoader';
 
+import CheckBridgeElement from '~/state/polling/CheckBridgeElement';
 import { store } from '~/state/store';
 import { hideOption } from '~/state/utils/actions';
 
+//import ClipLoader from 'react-spinners/ClipLoader';
+
 interface Data {
-  address: string;
   assetId: string;
+  from: string;
+  hash: string;
   type: string;
 }
-function TableRow(props: { data: Data }) {
+
+/*function TableRow(props: { data: Data }) {
   return (
     <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
       <td className="py-4 px-6 text-sm font-medium text-gray-500 whitespace-nowrap dark:text-white">
@@ -69,7 +73,7 @@ function TableRow(props: { data: Data }) {
       </td>
     </tr>
   );
-}
+}*/
 
 const TABLE_CONTAINER = styled.div`
   position: relative;
@@ -79,6 +83,8 @@ const TABLE_CONTAINER = styled.div`
 export default function Table() {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const data = useSelector((state: any) => state.assetCheckReducer);
+  // eslint-disable-next-line no-console
+  console.log(data);
   function toggleElement() {
     store.dispatch(hideOption());
   }
@@ -145,7 +151,13 @@ export default function Table() {
                 </thead>
                 <tbody>
                   {data?.map((element: Data, index: number) => (
-                    <TableRow data={element} key={index} />
+                    <CheckBridgeElement
+                      key={index}
+                      address={element.from}
+                      assetId={element.assetId}
+                      hash={element.hash}
+                      type={element.type}
+                    />
                   ))}
                 </tbody>
               </table>
