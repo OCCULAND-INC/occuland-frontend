@@ -3,8 +3,6 @@ import { useWeb3React } from '@web3-react/core';
 import Image from 'next/image';
 import { useEffect } from 'react';
 
-import Alert from '~/components/global/Alert/Alert';
-import { AlertType } from '~/components/global/Alert/Alert.types';
 import Button from '~/components/global/Button/Button';
 import { useWeb3ManagerContext } from '~/contexts/Web3Manager.context';
 import {
@@ -12,6 +10,8 @@ import {
   CONNECTORS_WITH_INFO,
   ConnectorType,
 } from '~/lib/utils/connectors';
+import { setError } from '~/state/error/actions';
+import { store } from '~/state/store';
 
 interface Props {
   onClick: () => void;
@@ -29,6 +29,10 @@ function ConnectWallet({ onClick }: Props) {
       onClick();
     }
   }, [context.account]);
+
+  useEffect(() => {
+    store.dispatch(setError(context.error?.toString() || ''));
+  }, [context.error]);
 
   const handleConnect =
     (currentConnector: ConnectorType, name: ConnectorNames) => async () => {
@@ -49,9 +53,10 @@ function ConnectWallet({ onClick }: Props) {
         const {
           connector: currentConnector,
           svg,
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
           name: connectorName,
         } = CONNECTORS_WITH_INFO[name as ConnectorNames];
-        const activating = currentConnector === activatingConnector;
+        //const activating = currentConnector === activatingConnector;
         const connected = currentConnector === connector;
         const disabled = !triedEager || !!activatingConnector || !!error;
 
@@ -66,8 +71,13 @@ function ConnectWallet({ onClick }: Props) {
             className="flex justify-center items-center mb-5"
           >
             {svg && <Image src={svg} width={25} height={25} />}
-            <span className="mx-5">{connectorName}</span>
-            {activating && 'Connecting...'}
+            <span className="mx-5">
+              {context.account ? (
+                <Address address={context.account?.toString() || ''} />
+              ) : (
+                'Metamask'
+              )}
+            </span>
             {connected && !disabled && (
               <span role="img" aria-label="check">
                 ✅
@@ -76,9 +86,30 @@ function ConnectWallet({ onClick }: Props) {
           </Button>
         );
       })}
-      {error && <Alert type={AlertType.ERROR} text={error.message} />}
+      {/*error && <Alert type={AlertType.ERROR} text={error.message} />*/}
     </div>
   );
 }
 
 export default ConnectWallet;
+
+function Address(props: { address: string }) {
+  return (
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center',
+      }}
+    >
+      {/*<Identicon value={props.address} size={32} />*/}
+      <label>
+        {' '}
+        {props.address.substring(0, 3) +
+          '...' +
+          props.address.substring(39, 42)}
+      </label>
+    </div>
+  );
+}

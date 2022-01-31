@@ -7,6 +7,9 @@ import ClipLoader from 'react-spinners/ClipLoader';
 
 import Button from '~/components/global/Button/Button';
 import Select, { SelectOption } from '~/components/global/Select/Select';
+import { addAssetToWaitCheker } from '~/state/polling/actions';
+import { store } from '~/state/store';
+import { openOption } from '~/state/utils/actions';
 
 import Land from '../../../../contracts/Land.json';
 import Occuland from '../../../../contracts/Occuland.json';
@@ -106,6 +109,11 @@ const mockOptions: Array<SelectOption> = [
     text: 'Avalanche',
   },
 ];
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const chainIds: any = {
+  '0x3': 3,
+  '0xa869': 43113,
+};
 
 /*const mockAssets: Array<SelectOption> = [
   {
@@ -156,7 +164,7 @@ function TokenBridge() {
   }, [assets]);
 
   useEffect(() => {
-    if (context.chainId?.toString() != selectedNetwork) {
+    if (context.chainId?.toString() != chainIds[selectedNetwork]) {
       setNetworkNeedsChange(true);
     } else {
       setNetworkNeedsChange(false);
@@ -237,7 +245,17 @@ function TokenBridge() {
       );
       const txnReceipt = await txn.wait();
       if (txnReceipt) {
+        // eslint-disable-next-line no-console
+        //console.log(txnReceipt.transactionHash);
+        checkBridgeAssetStatus(
+          context.account?.toString() || '',
+          '0xb92bC1F5456e1E7B2971450D36FD2eBE73eeF70B',
+          selectedAsset?.value || '0',
+          'out',
+          txnReceipt.transactionHash,
+        );
         setLoading(LOADING_STATE.OFF);
+        store.dispatch(openOption());
       }
     } catch (e) {
       setLoading(LOADING_STATE.ERROR);
@@ -253,14 +271,22 @@ function TokenBridge() {
       );
       const txnReceipt = await txn.wait();
       if (txnReceipt) {
+        checkBridgeAssetStatus(
+          context.account?.toString() || '',
+          contractAddress,
+          selectedAsset?.value || '0',
+          'in',
+          txnReceipt.transactionHash,
+        );
         setLoading(LOADING_STATE.OFF);
+        store.dispatch(openOption());
       }
     } catch (e) {
       setLoading(LOADING_STATE.ERROR);
     }
   };
 
-  const testMintLand = async () => {
+  /*const testMintLand = async () => {
     await window.ethereum.request({
       method: 'wallet_switchEthereumChain',
       params: [{ chainId: '0x3' }],
@@ -269,6 +295,16 @@ function TokenBridge() {
       const res = await contract.mintLand();
       await res.wait();
     }, 3000);
+  };*/
+
+  const checkBridgeAssetStatus = async (
+    from: string,
+    to: string,
+    id: string,
+    type: string,
+    transaction_hash: string,
+  ) => {
+    store.dispatch(addAssetToWaitCheker(from, to, id, type, transaction_hash));
   };
 
   if (loading == LOADING_STATE.INIT) {
@@ -280,10 +316,7 @@ function TokenBridge() {
   }
 
   return (
-    <div
-      className="container mx-auto h-full flex flex-col justify-center items-center"
-      style={{ position: 'relative' }}
-    >
+    <div className="container mx-auto h-full flex flex-col justify-center items-center">
       <div className="p-6 w-96 max-w-sm bg-white rounded-lg border border-gray-200 shadow-md dark:bg-gray-800 dark:border-gray-700">
         <Select
           defaultValue={selectedNetwork}
@@ -338,6 +371,8 @@ function TokenBridge() {
           </label>
         </div>
       </div>
+      {/*
+      Button to get testnet land.
       <div
         style={{
           backgroundColor: 'red',
@@ -348,7 +383,7 @@ function TokenBridge() {
         }}
       >
         <button onClick={testMintLand}>GET TESTNET LAND</button>
-      </div>
+      </div>*/}
       {loading == LOADING_STATE.TXN_WAIT && (
         <LOADING_SCREEN>
           <LoadingSpinnerComponent message={LOADING_MESSAGE} />
@@ -365,9 +400,11 @@ function TokenBridge() {
           <button>X</button>
         </ERROR_INDICATOR>
       )}
+      {/* Address is shown in button header, otherwise the bottom block can help
+      to display to the user, what current account it connected.
       <div style={{ position: 'absolute', top: '2px', left: '1px' }}>
         <Address address={ethers.utils.getAddress(context?.account || '')} />
-      </div>
+      </div>*/}
     </div>
   );
 }
@@ -422,6 +459,8 @@ function Network(props: { title: string; url: string }) {
   );
 }
 
+/*
+component to generate unique image from address
 function Address(props: { address: string }) {
   return (
     <div
@@ -431,7 +470,7 @@ function Address(props: { address: string }) {
         alignItems: 'center',
       }}
     >
-      {/*<Identicon value={props.address} size={32} />*/}
+      <Identicon value={props.address} size={32} />
       <label>
         {' '}
         Connected:{' '}
@@ -441,6 +480,6 @@ function Address(props: { address: string }) {
       </label>
     </div>
   );
-}
+}*/
 
 export default TokenBridge;
