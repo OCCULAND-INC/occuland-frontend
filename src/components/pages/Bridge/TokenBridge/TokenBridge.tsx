@@ -5,6 +5,7 @@ import { ethers } from 'ethers';
 import { useEffect, useState } from 'react';
 import ClipLoader from 'react-spinners/ClipLoader';
 
+import Backdrop from '~/components/global/Backdrop/Backdrop';
 import Button from '~/components/global/Button/Button';
 import Select, { SelectOption } from '~/components/global/Select/Select';
 import { addAssetToWaitCheker } from '~/state/polling/actions';
@@ -15,17 +16,6 @@ import Land from '../../../../contracts/Land.json';
 import Occuland from '../../../../contracts/Occuland.json';
 import BridgeAsset from '../BridgeAsset/BridgeAsset';
 
-const LOADING_SCREEN = styled.div`
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgb(1, 1, 1, 0.8);
-  display: flex;
-  justify-content: center;
-  z-index: 1;
-`;
 const ERROR_INDICATOR = styled.div`
   position: absolute;
   bottom: 10px;
@@ -283,9 +273,9 @@ function TokenBridge() {
 
   if (loading == LOADING_STATE.INIT) {
     return (
-      <LOADING_SCREEN>
+      <Backdrop>
         <LoadingSpinnerComponent message="Loading . . ." />
-      </LOADING_SCREEN>
+      </Backdrop>
     );
   }
 
@@ -347,14 +337,14 @@ function TokenBridge() {
       </div>
 
       {loading == LOADING_STATE.TXN_WAIT && (
-        <LOADING_SCREEN>
+        <Backdrop>
           <LoadingSpinnerComponent message={LOADING_MESSAGE} />
-        </LOADING_SCREEN>
+        </Backdrop>
       )}
       {loading == LOADING_STATE.NTWRK_CHANGE && (
-        <LOADING_SCREEN>
+        <Backdrop>
           <LoadingSpinnerComponent message="Retrieving Your NFTs" />
-        </LOADING_SCREEN>
+        </Backdrop>
       )}
       {loading == LOADING_STATE.ERROR && (
         <ERROR_INDICATOR onClick={() => setLoading(LOADING_STATE.OFF)}>
@@ -362,11 +352,6 @@ function TokenBridge() {
           <button>X</button>
         </ERROR_INDICATOR>
       )}
-      {/* Address is shown in button header, otherwise the bottom block can help
-      to display to the user, what current account it connected.
-      <div style={{ position: 'absolute', top: '2px', left: '1px' }}>
-        <Address address={ethers.utils.getAddress(context?.account || '')} />
-      </div>*/}
     </div>
   );
 }
