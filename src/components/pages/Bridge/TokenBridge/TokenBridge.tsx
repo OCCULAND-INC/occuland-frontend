@@ -13,6 +13,7 @@ import { openOption } from '~/state/utils/actions';
 
 import Land from '../../../../contracts/Land.json';
 import Occuland from '../../../../contracts/Occuland.json';
+import BridgeAsset from '../BridgeAsset/BridgeAsset';
 
 const LOADING_SCREEN = styled.div`
   position: absolute;
@@ -115,21 +116,6 @@ const chainIds: any = {
   '0xa869': 43113,
 };
 
-/*const mockAssets: Array<SelectOption> = [
-  {
-    value: '0xasd234sdf234234sdf',
-    text: '0xasd234sdf234234sdf',
-  },
-  {
-    value: '0xaaa234sdf234234sdf',
-    text: '0xaaa234sdf234234sdf',
-  },
-  {
-    value: '0xbbb234sdf234234sdf',
-    text: '0xbbb234sdf234234sdf',
-  },
-];*/
-
 function TokenBridge() {
   const context = useWeb3React<Web3Provider>();
   const [loading, setLoading] = useState<LOADING_STATE>(LOADING_STATE.INIT);
@@ -194,7 +180,6 @@ function TokenBridge() {
   };
 
   const handleSelectNetwork = (option: SelectOption) => {
-    console.info('selected option', option);
     setLoading(LOADING_STATE.NTWRK_CHANGE);
     switch (option.text) {
       case 'Ethereum':
@@ -286,17 +271,6 @@ function TokenBridge() {
     }
   };
 
-  /*const testMintLand = async () => {
-    await window.ethereum.request({
-      method: 'wallet_switchEthereumChain',
-      params: [{ chainId: '0x3' }],
-    });
-    setTimeout(async () => {
-      const res = await contract.mintLand();
-      await res.wait();
-    }, 3000);
-  };*/
-
   const checkBridgeAssetStatus = async (
     from: string,
     to: string,
@@ -346,14 +320,14 @@ function TokenBridge() {
             css={{ width: '250px', display: 'flex' }}
           >
             {selectedNetwork == '0x3' ? (
-              <Network
+              <BridgeAsset
                 url={
                   'https://www.pngall.com/wp-content/uploads/10/Avalanche-Crypto-Logo-PNG-Pic.png'
                 }
                 title="Avalanche"
               />
             ) : (
-              <Network
+              <BridgeAsset
                 url={
                   'https://www.pngall.com/wp-content/uploads/10/Ethereum-Logo-PNG-Image-HD.png'
                 }
@@ -371,19 +345,7 @@ function TokenBridge() {
           </label>
         </div>
       </div>
-      {/*
-      Button to get testnet land.
-      <div
-        style={{
-          backgroundColor: 'red',
-          color: 'white',
-          position: 'absolute',
-          right: '10px',
-          top: '10px',
-        }}
-      >
-        <button onClick={testMintLand}>GET TESTNET LAND</button>
-      </div>*/}
+
       {loading == LOADING_STATE.TXN_WAIT && (
         <LOADING_SCREEN>
           <LoadingSpinnerComponent message={LOADING_MESSAGE} />
@@ -432,54 +394,5 @@ function LoadingSpinnerComponent(props: { message: string }) {
     </div>
   );
 }
-
-function Network(props: { title: string; url: string }) {
-  const COMP = styled.div`
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-    height: 100%;
-    width: 100%;
-    label {
-      padding-left: 5px;
-      color: white;
-    }
-    img {
-      padding-left: 5px;
-      height: 100%;
-    }
-  `;
-  return (
-    <COMP>
-      <span>Bridge Asset to</span>
-      <img src={props.url} />
-      <label>{props.title}</label>
-    </COMP>
-  );
-}
-
-/*
-component to generate unique image from address
-function Address(props: { address: string }) {
-  return (
-    <div
-      style={{
-        display: 'flex',
-        flexDirection: 'row',
-        alignItems: 'center',
-      }}
-    >
-      <Identicon value={props.address} size={32} />
-      <label>
-        {' '}
-        Connected:{' '}
-        {props.address.substring(0, 6) +
-          '...' +
-          props.address.substring(36, 42)}
-      </label>
-    </div>
-  );
-}*/
 
 export default TokenBridge;
