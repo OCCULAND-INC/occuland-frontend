@@ -65,16 +65,19 @@ function Select({
           aria-haspopup="listbox"
           aria-expanded="true"
           aria-labelledby="listbox-label"
+          disabled={!options.length}
         >
           <span className="flex items-center">
-            <span className="block">{selectedOption?.text}</span>
+            <span className="block">
+              {selectedOption?.text || 'No options'}
+            </span>
           </span>
           <span className="ml-3 absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
             <SelectorIcon className="h-5 w-5 text-gray-400" />
           </span>
         </button>
 
-        {isOpen && (
+        {isOpen && !!options.length && (
           <ul
             className="absolute z-10 mt-1 w-full bg-white shadow-lg max-h-56 rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm"
             tabIndex={-1}
