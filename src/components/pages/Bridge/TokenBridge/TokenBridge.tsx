@@ -7,24 +7,25 @@ import ClipLoader from 'react-spinners/ClipLoader';
 import Backdrop from '~/components/global/Backdrop/Backdrop';
 import Button from '~/components/global/Button/Button';
 import Select, { SelectOption } from '~/components/global/Select/Select';
+import Land from '~/contracts/Land.json';
+import Occuland from '~/contracts/Occuland.json';
 import { useContract } from '~/hooks/contracts';
 import { getAllAssetsFromOwner } from '~/lib/api/assets';
 import { addAssetToWaitCheker } from '~/state/polling/actions';
 import { store } from '~/state/store';
 import { openOption } from '~/state/utils/actions';
 
-import Land from '../../../../contracts/Land.json';
-import Occuland from '../../../../contracts/Occuland.json';
 import BridgeAsset from '../BridgeAsset/BridgeAsset';
 import {
   chainIds,
   CONTRACT_ADDRESSES,
+  fromOptions,
   LOADING_STATE,
   SUPPORTED_CHAINS,
 } from './TokenBridge.utils';
 
 function TokenBridge() {
-  const { account, library, chainId } = useWeb3React<Web3Provider>();
+  const { account, chainId } = useWeb3React<Web3Provider>();
   const [loading, setLoading] = useState<LOADING_STATE>(LOADING_STATE.INIT);
   const [assets, setAssets] = useState<Array<SelectOption>>([]);
   const [abi, setAbi] = useState<ContractInterface>(Land.abi);
@@ -55,15 +56,8 @@ function TokenBridge() {
       setAssets(options);
     }
 
-    if (contractAddress) {
-      fetchAsset();
-      connectToContract(library, abi, contractAddress);
-    }
+    fetchAsset();
   }, [contractAddress, abi]);
-
-  useEffect(() => {
-    setSelectedAsset(assets[0]);
-  }, [assets]);
 
   useEffect(() => {
     if (chainId?.toString() != chainIds[selectedNetwork]) {
@@ -116,7 +110,7 @@ function TokenBridge() {
   const bridgeAssetToAvax = async () => {
     setLoading(LOADING_STATE.TXN_WAIT);
     try {
-      const txn = await contract.transferFrom(
+      const txn = await contract?.transferFrom(
         account,
         '0xb92bC1F5456e1E7B2971450D36FD2eBE73eeF70B',
         parseInt(selectedAsset?.value || '0'),
@@ -144,7 +138,7 @@ function TokenBridge() {
   const bridgeAssetToEth = async () => {
     setLoading(LOADING_STATE.TXN_WAIT);
     try {
-      const txn = await contract.bridgeBack(
+      const txn = await contract?.bridgeBack(
         parseInt(selectedAsset?.value || '0'),
         { value: 0 },
       );
@@ -250,12 +244,7 @@ function TokenBridge() {
           <LoadingSpinnerComponent message="Retrieving Your NFTs" />
         </Backdrop>
       )}
-      {loading == LOADING_STATE.ERROR && (
-        <ERROR_INDICATOR onClick={() => setLoading(LOADING_STATE.OFF)}>
-          <span>Loading Error</span>
-          <button>X</button>
-        </ERROR_INDICATOR>
-      )}
+      {loading == LOADING_STATE.ERROR && <span>Loading Error</span>}
     </div>
   );
 }

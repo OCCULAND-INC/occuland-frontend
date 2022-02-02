@@ -1,4 +1,4 @@
-import { Contract } from '@ethersproject/contracts';
+import { Contract, ContractInterface } from '@ethersproject/contracts';
 import { useWeb3React } from '@web3-react/core';
 import { useMemo } from 'react';
 
@@ -6,7 +6,7 @@ import { getContract } from '~/lib/utils/contract';
 
 export function useContract(
   address: string | undefined,
-  ABI: any,
+  ABI: ContractInterface,
   withSignerIfPossible = true,
 ): Contract | null {
   const { library, account } = useWeb3React();
