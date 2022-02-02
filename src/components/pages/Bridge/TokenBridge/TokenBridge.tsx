@@ -46,19 +46,21 @@ function TokenBridge() {
 
   useEffect(() => {
     async function fetchAsset() {
-      const { result } = await getAllAssetsFromOwner(
+      const res = await getAllAssetsFromOwner(
         account ? account : '',
         contractAddress,
         selectedNetwork,
       );
 
-      const options: Array<SelectOption> = result.map(
-        (item: { token_id: string }) => ({
-          text: item.token_id,
-          value: item.token_id,
-        }),
-      );
-      setAssets(options);
+      if (res.isSuccess) {
+        const options: Array<SelectOption> = res.data.result.map(
+          (item: { token_id: string }) => ({
+            text: item.token_id,
+            value: item.token_id,
+          }),
+        );
+        setAssets(options);
+      }
     }
 
     fetchAsset();
@@ -94,7 +96,6 @@ function TokenBridge() {
   };
 
   const brigeTo = () => {
-    // SET_LOADING_MESSAGE('Confirming Transaction . . . ');
     if (selectedNetwork === SUPPORTED_CHAINS.ETHEREUM) {
       bridgeAssetToAvax();
     } else {

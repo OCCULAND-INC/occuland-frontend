@@ -1,11 +1,15 @@
 import { fetchWithErrorHandling } from '../fetch';
 
+interface AssetsResponse {
+  result: Array<{ token_id: string }>;
+}
+
 export const getAllAssetsFromOwner = async (
   wallet_address: string,
   contract_address: string,
-  chain: string,
+  chainName: string,
 ) => {
-  return await fetchWithErrorHandling({
+  return await fetchWithErrorHandling<AssetsResponse>({
     endpoint: `${wallet_address}/nft/${contract_address}`,
     headers: {
       accept: 'application/json',
@@ -18,7 +22,7 @@ export const getAllAssetsFromOwner = async (
       contract_address,
     },
     query: {
-      chain,
+      chain: chainName,
       format: 'decimal',
     },
     urlBase: 'https://deep-index.moralis.io/api/v2/',

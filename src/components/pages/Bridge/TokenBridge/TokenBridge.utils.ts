@@ -13,8 +13,8 @@ export enum LOADING_STATE {
 }
 
 export enum SUPPORTED_CHAINS {
-  AVL = 'Avalanche',
-  ETHEREUM = 'Ethereumn',
+  AVL = 'avalanche',
+  ETHEREUM = 'ropsten',
 }
 
 export const fromOptions: Array<SelectOption> = [
