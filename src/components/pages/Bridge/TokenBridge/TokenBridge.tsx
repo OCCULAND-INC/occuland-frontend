@@ -7,8 +7,6 @@ import ClipLoader from 'react-spinners/ClipLoader';
 import Backdrop from '~/components/global/Backdrop/Backdrop';
 import Button from '~/components/global/Button/Button';
 import Select, { SelectOption } from '~/components/global/Select/Select';
-import Land from '~/contracts/Land.json';
-import Occuland from '~/contracts/Occuland.json';
 import { useContract } from '~/hooks/contracts';
 import { getAllAssetsFromOwner } from '~/lib/api/assets';
 import { addAssetToWaitCheker } from '~/state/polling/actions';
@@ -17,26 +15,32 @@ import { openOption } from '~/state/utils/actions';
 
 import BridgeAsset from '../BridgeAsset/BridgeAsset';
 import {
-  chainIds,
+  ABIS,
+  CHAIN_IDS,
   CONTRACT_ADDRESSES,
   fromOptions,
   LOADING_STATE,
   SUPPORTED_CHAINS,
+  WALLET_ADDRESS,
 } from './TokenBridge.utils';
 
 function TokenBridge() {
   const { account, chainId } = useWeb3React<Web3Provider>();
   const [loading, setLoading] = useState<LOADING_STATE>(LOADING_STATE.INIT);
   const [assets, setAssets] = useState<Array<SelectOption>>([]);
-  const [abi, setAbi] = useState<ContractInterface>(Land.abi);
+  const [abi, setAbi] = useState<ContractInterface>(
+    ABIS[SUPPORTED_CHAINS.ETHEREUM],
+  );
   const [contractAddress, setContractAddress] = useState<string>(
     CONTRACT_ADDRESSES[SUPPORTED_CHAINS.ETHEREUM],
   );
 
-  const [selectedNetwork, setSelectedNetwork] = useState<string>('0x3');
+  const [selectedNetwork, setSelectedNetwork] = useState(
+    SUPPORTED_CHAINS.ETHEREUM,
+  );
+
   const [selectedAsset, setSelectedAsset] = useState<SelectOption>();
   const [networkNeedsChange, setNetworkNeedsChange] = useState<boolean>();
-  const [LOADING_MESSAGE, SET_LOADING_MESSAGE] = useState<string>('');
 
   const contract = useContract(contractAddress, abi);
 
@@ -47,6 +51,7 @@ function TokenBridge() {
         contractAddress,
         selectedNetwork,
       );
+
       const options: Array<SelectOption> = result.map(
         (item: { token_id: string }) => ({
           text: item.token_id,
@@ -60,7 +65,7 @@ function TokenBridge() {
   }, [contractAddress, abi]);
 
   useEffect(() => {
-    if (chainId?.toString() != chainIds[selectedNetwork]) {
+    if (chainId !== CHAIN_IDS[selectedNetwork]) {
       setNetworkNeedsChange(true);
     } else {
       setNetworkNeedsChange(false);
@@ -68,19 +73,9 @@ function TokenBridge() {
   }, [selectedNetwork, chainId]);
 
   const handleSelectNetwork = (option: SelectOption) => {
-    setLoading(LOADING_STATE.NTWRK_CHANGE);
-    switch (option.text) {
-      case 'Ethereum':
-        setContractAddress('0x527d522aCe5AdFE80Dd4819186d5577a06f8Aa8a');
-        setAbi(Land.abi);
-        break;
-      case 'Avalanche':
-        setContractAddress('0xC2Add3317E84E7F9EaA89f376b5e92585D6539fB');
-        setAbi(Occuland.abi);
-        break;
-      default:
-    }
-    setSelectedNetwork(option.value);
+    setContractAddress(CONTRACT_ADDRESSES[option.value as SUPPORTED_CHAINS]);
+    setAbi(ABIS[option.value as SUPPORTED_CHAINS]);
+    setSelectedNetwork(option.value as SUPPORTED_CHAINS);
   };
 
   const handleSelectAssetId = (option: SelectOption) => {
@@ -88,9 +83,8 @@ function TokenBridge() {
   };
 
   const handleClickBridge = async () => {
-    if (chainId?.toString() != selectedNetwork) {
-      setLoading(LOADING_STATE.TXN_WAIT);
-      SET_LOADING_MESSAGE('Changing networks . . . ');
+    if (chainId !== CHAIN_IDS[selectedNetwork]) {
+      // SET_LOADING_MESSAGE('Changing networks . . . ');
       await window.ethereum.request({
         method: 'wallet_switchEthereumChain',
         params: [{ chainId: selectedNetwork }],
@@ -98,9 +92,10 @@ function TokenBridge() {
     }
     brigeTo();
   };
-  const brigeTo = async () => {
-    SET_LOADING_MESSAGE('Confirming Transaction . . . ');
-    if (selectedNetwork == '0x3') {
+
+  const brigeTo = () => {
+    // SET_LOADING_MESSAGE('Confirming Transaction . . . ');
+    if (selectedNetwork === SUPPORTED_CHAINS.ETHEREUM) {
       bridgeAssetToAvax();
     } else {
       bridgeAssetToEth();
@@ -110,28 +105,26 @@ function TokenBridge() {
   const bridgeAssetToAvax = async () => {
     setLoading(LOADING_STATE.TXN_WAIT);
     try {
-      const txn = await contract?.transferFrom(
+      const tx = await contract?.transferFrom(
         account,
-        '0xb92bC1F5456e1E7B2971450D36FD2eBE73eeF70B',
+        WALLET_ADDRESS,
         parseInt(selectedAsset?.value || '0'),
         { value: 0 },
       );
-      const txnReceipt = await txn.wait();
-      if (txnReceipt) {
-        // eslint-disable-next-line no-console
-        //console.log(txnReceipt.transactionHash);
+      const txReceipt = await tx.wait();
+
+      if (txReceipt) {
         checkBridgeAssetStatus(
           account?.toString() || '',
-          '0xb92bC1F5456e1E7B2971450D36FD2eBE73eeF70B',
+          WALLET_ADDRESS,
           selectedAsset?.value || '0',
           'out',
-          txnReceipt.transactionHash,
+          txReceipt.transactionHash,
         );
-        setLoading(LOADING_STATE.OFF);
         store.dispatch(openOption());
       }
     } catch (e) {
-      setLoading(LOADING_STATE.ERROR);
+      console.error(e);
     }
   };
 
@@ -169,14 +162,6 @@ function TokenBridge() {
     store.dispatch(addAssetToWaitCheker(from, to, id, type, transaction_hash));
   };
 
-  if (loading == LOADING_STATE.INIT) {
-    return (
-      <Backdrop>
-        <LoadingSpinnerComponent message="Loading . . ." />
-      </Backdrop>
-    );
-  }
-
   return (
     <div className="container mx-auto h-full flex flex-col justify-center items-center">
       <div className="p-6 w-96 max-w-sm bg-white rounded-lg border border-gray-200 shadow-md dark:bg-gray-800 dark:border-gray-700">
@@ -207,7 +192,7 @@ function TokenBridge() {
             onClick={handleClickBridge}
             css={{ width: '250px', display: 'flex' }}
           >
-            {selectedNetwork == '0x3' ? (
+            {selectedNetwork == SUPPORTED_CHAINS.ETHEREUM ? (
               <BridgeAsset
                 url={
                   'https://www.pngall.com/wp-content/uploads/10/Avalanche-Crypto-Logo-PNG-Pic.png'
@@ -234,11 +219,7 @@ function TokenBridge() {
         </div>
       </div>
 
-      {loading == LOADING_STATE.TXN_WAIT && (
-        <Backdrop>
-          <LoadingSpinnerComponent message={LOADING_MESSAGE} />
-        </Backdrop>
-      )}
+      {loading == LOADING_STATE.TXN_WAIT && <Backdrop>Loading</Backdrop>}
       {loading == LOADING_STATE.NTWRK_CHANGE && (
         <Backdrop>
           <LoadingSpinnerComponent message="Retrieving Your NFTs" />
