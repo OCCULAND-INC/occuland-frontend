@@ -17,7 +17,7 @@ const RPC_URLS: { [chainId: number]: string } = {
 };
 
 export const injected = new InjectedConnector({
-  supportedChainIds: [1, 3, 4, 5, 42, 43113],
+  supportedChainIds: [3, 43113],
 });
 
 export const network = new NetworkConnector({
@@ -44,7 +44,6 @@ export function getErrorMessage(error: Error) {
 
 export enum ConnectorNames {
   Injected = 'Injected',
-  //Network = 'Network',
 }
 
 export type ConnectorType = InjectedConnector | NetworkConnector;
@@ -64,9 +63,4 @@ export const CONNECTORS_WITH_INFO: {
     connector: injected,
     svg: MetamaskIcon,
   },
-  /*[ConnectorNames.Network]: {
-    name: 'Network',
-    connector: network,
-    svg: null,
-  },*/
 };

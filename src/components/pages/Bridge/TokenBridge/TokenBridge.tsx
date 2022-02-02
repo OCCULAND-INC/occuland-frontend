@@ -1,13 +1,14 @@
-import styled from '@emotion/styled';
+import { ContractInterface } from '@ethersproject/contracts';
 import { Web3Provider } from '@ethersproject/providers';
 import { useWeb3React } from '@web3-react/core';
-import { ethers } from 'ethers';
 import { useEffect, useState } from 'react';
 import ClipLoader from 'react-spinners/ClipLoader';
 
 import Backdrop from '~/components/global/Backdrop/Backdrop';
 import Button from '~/components/global/Button/Button';
 import Select, { SelectOption } from '~/components/global/Select/Select';
+import { useContract } from '~/hooks/contracts';
+import { getAllAssetsFromOwner } from '~/lib/api/assets';
 import { addAssetToWaitCheker } from '~/state/polling/actions';
 import { store } from '~/state/store';
 import { openOption } from '~/state/utils/actions';
@@ -15,123 +16,48 @@ import { openOption } from '~/state/utils/actions';
 import Land from '../../../../contracts/Land.json';
 import Occuland from '../../../../contracts/Occuland.json';
 import BridgeAsset from '../BridgeAsset/BridgeAsset';
-
-const ERROR_INDICATOR = styled.div`
-  position: absolute;
-  bottom: 10px;
-  right: 10px;
-  width: 250px;
-  height: 50px;
-  border-radius: 10px;
-  box-shadow: 1px 2px 4px 1px grey;
-  background-color: #f4a8be;
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-  padding: 10px;
-  &:hover {
-    cursor: pointer;
-  }
-  span {
-    text-align: center;
-    font-weight: bold;
-    color: black;
-    padding: 0px 10px;
-    width: 100%;
-  }
-  button {
-    border-left: solid 1px black;
-    font-weight: 900;
-    font-size: 20px;
-    width: 50px;
-  }
-`;
-
-enum LOADING_STATE {
-  ERROR = 'ERROR',
-  INIT = 'INIT',
-  NTWRK_CHANGE = 'NTWRK_CHANGE',
-  OFF = 'OFF',
-  TXN_WAIT = 'TXN_WAIT',
-}
-
-const getAllAssetsFromOwner = async (
-  wallet_address: string,
-  contract_address: string,
-  chain: string,
-  setLoading: (e: LOADING_STATE) => void,
-  setAssets: (e: Array<SelectOption>) => void,
-) => {
-  fetch(
-    `https://deep-index.moralis.io/api/v2/${wallet_address}/nft/${contract_address}?chain=${chain}&format=decimal`,
-    {
-      method: 'GET',
-      headers: {
-        accept: 'application/json',
-        'X-API-Key':
-          'Bi0Jg7ErflhatonyuScinKbmkK7Vc7ZnaJKpHBlwbDyIuWHHcbp4VbPimhQBHC9w',
-      },
-    },
-  )
-    .then(async (response) => {
-      const res = await response.json();
-      const x: Array<SelectOption> = await res.result.map(
-        (item: { token_id: string }) => ({
-          text: item.token_id,
-          value: item.token_id,
-        }),
-      );
-      setAssets(x);
-      setLoading(LOADING_STATE.OFF);
-    })
-    .catch((err) => {
-      console.error(err);
-    });
-};
-
-const mockOptions: Array<SelectOption> = [
-  {
-    value: '0x3',
-    text: 'Ethereum',
-  },
-  {
-    value: '0xa869',
-    text: 'Avalanche',
-  },
-];
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const chainIds: any = {
-  '0x3': 3,
-  '0xa869': 43113,
-};
+import {
+  chainIds,
+  CONTRACT_ADDRESSES,
+  LOADING_STATE,
+  SUPPORTED_CHAINS,
+} from './TokenBridge.utils';
 
 function TokenBridge() {
-  const context = useWeb3React<Web3Provider>();
+  const { account, library, chainId } = useWeb3React<Web3Provider>();
   const [loading, setLoading] = useState<LOADING_STATE>(LOADING_STATE.INIT);
   const [assets, setAssets] = useState<Array<SelectOption>>([]);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const [contract, setContract] = useState<any>();
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const [abi, setAbi] = useState<any>(Land);
+  const [abi, setAbi] = useState<ContractInterface>(Land.abi);
   const [contractAddress, setContractAddress] = useState<string>(
-    '0x527d522aCe5AdFE80Dd4819186d5577a06f8Aa8a',
+    CONTRACT_ADDRESSES[SUPPORTED_CHAINS.ETHEREUM],
   );
+
   const [selectedNetwork, setSelectedNetwork] = useState<string>('0x3');
   const [selectedAsset, setSelectedAsset] = useState<SelectOption>();
   const [networkNeedsChange, setNetworkNeedsChange] = useState<boolean>();
   const [LOADING_MESSAGE, SET_LOADING_MESSAGE] = useState<string>('');
 
+  const contract = useContract(contractAddress, abi);
+
   useEffect(() => {
-    if (contractAddress) {
-      getAllAssetsFromOwner(
-        context.account ? context.account : '',
+    async function fetchAsset() {
+      const { result } = await getAllAssetsFromOwner(
+        account ? account : '',
         contractAddress,
         selectedNetwork,
-        loadingMiddleman,
-        setAssets,
       );
-      connectToContract(context.library, abi, contractAddress);
+      const options: Array<SelectOption> = result.map(
+        (item: { token_id: string }) => ({
+          text: item.token_id,
+          value: item.token_id,
+        }),
+      );
+      setAssets(options);
+    }
+
+    if (contractAddress) {
+      fetchAsset();
+      connectToContract(library, abi, contractAddress);
     }
   }, [contractAddress, abi]);
 
@@ -140,45 +66,23 @@ function TokenBridge() {
   }, [assets]);
 
   useEffect(() => {
-    if (context.chainId?.toString() != chainIds[selectedNetwork]) {
+    if (chainId?.toString() != chainIds[selectedNetwork]) {
       setNetworkNeedsChange(true);
     } else {
       setNetworkNeedsChange(false);
     }
-  }, [selectedNetwork, context.chainId]);
-
-  const loadingMiddleman = async (state: LOADING_STATE) => {
-    if (state == LOADING_STATE.OFF) {
-      setTimeout(() => setLoading(state), 1000);
-    } else {
-      setLoading(state);
-    }
-  };
-
-  const connectToContract = async (
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    val: any,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    abi: any,
-    contractAddress: string,
-  ) => {
-    if (val.provider) {
-      const pr = new ethers.providers.Web3Provider(val.provider);
-      const signer = pr.getSigner();
-      setContract(new ethers.Contract(contractAddress, abi.abi, signer));
-    }
-  };
+  }, [selectedNetwork, chainId]);
 
   const handleSelectNetwork = (option: SelectOption) => {
     setLoading(LOADING_STATE.NTWRK_CHANGE);
     switch (option.text) {
       case 'Ethereum':
         setContractAddress('0x527d522aCe5AdFE80Dd4819186d5577a06f8Aa8a');
-        setAbi(Land);
+        setAbi(Land.abi);
         break;
       case 'Avalanche':
         setContractAddress('0xC2Add3317E84E7F9EaA89f376b5e92585D6539fB');
-        setAbi(Occuland);
+        setAbi(Occuland.abi);
         break;
       default:
     }
@@ -190,7 +94,7 @@ function TokenBridge() {
   };
 
   const handleClickBridge = async () => {
-    if (context.chainId?.toString() != selectedNetwork) {
+    if (chainId?.toString() != selectedNetwork) {
       setLoading(LOADING_STATE.TXN_WAIT);
       SET_LOADING_MESSAGE('Changing networks . . . ');
       await window.ethereum.request({
@@ -213,7 +117,7 @@ function TokenBridge() {
     setLoading(LOADING_STATE.TXN_WAIT);
     try {
       const txn = await contract.transferFrom(
-        context.account,
+        account,
         '0xb92bC1F5456e1E7B2971450D36FD2eBE73eeF70B',
         parseInt(selectedAsset?.value || '0'),
         { value: 0 },
@@ -223,7 +127,7 @@ function TokenBridge() {
         // eslint-disable-next-line no-console
         //console.log(txnReceipt.transactionHash);
         checkBridgeAssetStatus(
-          context.account?.toString() || '',
+          account?.toString() || '',
           '0xb92bC1F5456e1E7B2971450D36FD2eBE73eeF70B',
           selectedAsset?.value || '0',
           'out',
@@ -247,7 +151,7 @@ function TokenBridge() {
       const txnReceipt = await txn.wait();
       if (txnReceipt) {
         checkBridgeAssetStatus(
-          context.account?.toString() || '',
+          account?.toString() || '',
           contractAddress,
           selectedAsset?.value || '0',
           'in',
@@ -285,7 +189,7 @@ function TokenBridge() {
         <Select
           defaultValue={selectedNetwork}
           label="From:"
-          options={mockOptions}
+          options={fromOptions}
           onChange={handleSelectNetwork}
           className="mb-5"
         />
