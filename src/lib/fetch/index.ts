@@ -4,7 +4,7 @@ import { AsyncResponse } from './index.types';
 const authorizationExpiration: Date | null = null;
 const authorizationHeader: string | null = null;
 const authorizationFunction: (() => Promise<void>) | null = null;
-let urlBase = '';
+// const defaultBaseUrl = '';
 
 const ErrorByStatus: Record<number, string> = {
   400: FetchErrorCodes.BadRequest,
@@ -30,6 +30,7 @@ interface FetchProps<U> {
   authorizationFunctionRetriesLeft?: number;
   endpoint: string;
   formBody?: Record<string, string>;
+  headers?: Record<string, string>;
   includeAuthorization?: boolean;
   includeUserRegion?: boolean;
   includeUserZip?: boolean;
@@ -38,7 +39,7 @@ interface FetchProps<U> {
   params?: Record<string, string | string[]>;
   query?: Record<string, string>;
   signal?: AbortSignal;
-  ssoToken?: string;
+  urlBase: string;
 }
 
 export async function fetch<T, U = never>({
@@ -51,6 +52,8 @@ export async function fetch<T, U = never>({
   params = {},
   query = {},
   signal,
+  headers: additionalHeaders,
+  urlBase,
 }: FetchProps<U>): Promise<T> {
   const global = typeof globalThis !== undefined ? globalThis : window;
   if (urlBase === '') {
@@ -72,7 +75,7 @@ export async function fetch<T, U = never>({
     await authorizationFunction();
   }
 
-  const headers: Record<string, string> = {};
+  const headers: Record<string, string> = { ...additionalHeaders };
   if (includeAuthorization && authorizationHeader) {
     headers.Authorization = authorizationHeader;
   }
@@ -138,6 +141,7 @@ export async function fetch<T, U = never>({
         params,
         query,
         signal,
+        urlBase,
       });
     }
 
@@ -180,6 +184,6 @@ export async function fetchWithErrorHandling<T, U = never>(
   }
 }
 
-export function fetchSetUrlBase(newUrlBase: string) {
-  urlBase = newUrlBase;
-}
+// export function fetchSetUrlBase(newUrlBase: string) {
+//   defaultBaseUrl = newUrlBase;
+// }
