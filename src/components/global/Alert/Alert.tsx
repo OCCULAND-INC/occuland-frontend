@@ -5,14 +5,14 @@ import { randomString } from '~/lib/utils/string';
 
 import { AlertType, styles } from './Alert.types';
 
-interface Props {
+export interface AlertProps {
   className?: string;
   id?: string;
   text: string;
   type: AlertType;
 }
 
-function Alert({ id, type, text, className = '' }: Props) {
+function Alert({ id, type, text, className = '' }: AlertProps) {
   const [isOpen, setIsOpen] = useState<boolean>(true);
 
   const handleDismiss = () => {

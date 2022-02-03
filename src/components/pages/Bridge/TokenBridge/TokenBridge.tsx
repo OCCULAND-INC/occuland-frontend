@@ -84,12 +84,12 @@ function TokenBridge() {
   };
 
   const bridgeAssetToAvax = async () => {
-    if (!selectedAsset) {
+    if (!selectedAsset || !contract) {
       return;
     }
 
     try {
-      const tx = await contract?.transferFrom(
+      const tx = await contract.transferFrom(
         account,
         COMPANY_WALLET_ADDRESS,
         parseInt(selectedAsset.value),
@@ -106,11 +106,14 @@ function TokenBridge() {
   };
 
   const bridgeAssetToEth = async () => {
+    if (!selectedAsset || !contract) {
+      return;
+    }
+
     try {
-      const tx = await contract?.bridgeBack(
-        parseInt(selectedAsset?.value || '0'),
-        { value: 0 },
-      );
+      const tx = await contract.bridgeBack(parseInt(selectedAsset.value), {
+        value: 0,
+      });
       const txReceipt = await tx.wait();
       if (txReceipt) {
         console.info('txReceipt', txReceipt);
