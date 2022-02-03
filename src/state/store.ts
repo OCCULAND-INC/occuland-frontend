@@ -1,5 +1,6 @@
 import { configureStore } from '@reduxjs/toolkit';
 
+import appReducer from './app/reducer';
 import bridge from './bridge/reducer';
 import errorReducer from './error/reducer';
 import assetCheckReducer, { statusApi } from './polling/reducer';
@@ -10,6 +11,7 @@ export type AppDispatch = typeof store.dispatch;
 
 export const store = configureStore({
   reducer: {
+    app: appReducer,
     assetCheckReducer,
     bridge,
     errorReducer,

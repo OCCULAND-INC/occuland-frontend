@@ -5,6 +5,7 @@ import { Provider } from 'react-redux';
 
 import Layout from '~/components/global/Layout/Layout';
 import Sidebar from '~/components/global/SideBar/Sidebar';
+import ToastContainer from '~/components/global/Toast/ToastContainer';
 import Web3Manager from '~/components/global/Web3Manager/Web3Manager';
 import getLibrary from '~/lib/utils/getLibrary';
 import { store } from '~/state/store';
@@ -34,18 +35,10 @@ function App({ children }: Props) {
           <Web3Manager>
             <div className="flex">
               <Sidebar />
-              <div
-                style={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  justifyContent: 'center',
-                  overflow: 'hidden',
-                  position: 'relative',
-                  width: '100%',
-                }}
-              >
+              <div className="flex flex-col justify-center overflow-hidden relative w-full">
                 <Header />
                 <Layout>{children}</Layout>
+                <ToastContainer />
               </div>
             </div>
           </Web3Manager>
