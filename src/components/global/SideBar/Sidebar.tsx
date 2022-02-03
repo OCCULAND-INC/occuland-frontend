@@ -1,6 +1,5 @@
 import Image from 'next/image';
 import { useRouter } from 'next/router';
-import { useMoralis } from 'react-moralis';
 
 import Logo from '~/assets/logo/logo.svg';
 
@@ -8,8 +7,6 @@ import { ROUTES_MAP } from './Sidebar.utils';
 
 function Sidebar() {
   const router = useRouter();
-  const { authenticate, isAuthenticated, user } = useMoralis();
-  console.log('=====>', authenticate, isAuthenticated, user);
 
   const handleClickRoute = (href: string) => () => {
     router.push(href);

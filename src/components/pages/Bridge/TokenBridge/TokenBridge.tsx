@@ -3,31 +3,24 @@ import { Web3Provider } from '@ethersproject/providers';
 import { useWeb3React } from '@web3-react/core';
 import Moralis from 'moralis';
 import { useEffect, useState } from 'react';
-import ClipLoader from 'react-spinners/ClipLoader';
 
-import Backdrop from '~/components/global/Backdrop/Backdrop';
 import Button from '~/components/global/Button/Button';
 import Select, { SelectOption } from '~/components/global/Select/Select';
 import { useContract } from '~/hooks/contracts';
-import { addAssetToWaitCheker } from '~/state/polling/actions';
-import { store } from '~/state/store';
-import { openOption } from '~/state/utils/actions';
 
 import BridgeAsset from '../BridgeAsset/BridgeAsset';
+import { ChainType } from './TokenBridge.types';
 import {
   ABIS,
   CHAIN_IDS,
+  COMPANY_WALLET_ADDRESS,
   CONTRACT_ADDRESSES,
   fromOptions,
-  LOADING_STATE,
   SUPPORTED_CHAINS,
-  WALLET_ADDRESS,
 } from './TokenBridge.utils';
 
-type ChainType = 'ropsten';
 function TokenBridge() {
   const { account, chainId } = useWeb3React<Web3Provider>();
-  const [loading, setLoading] = useState<LOADING_STATE>(LOADING_STATE.INIT);
   const [assets, setAssets] = useState<Array<SelectOption>>([]);
   const [abi, setAbi] = useState<ContractInterface>(
     ABIS[SUPPORTED_CHAINS.ETHEREUM],
@@ -35,11 +28,9 @@ function TokenBridge() {
   const [contractAddress, setContractAddress] = useState<string>(
     CONTRACT_ADDRESSES[SUPPORTED_CHAINS.ETHEREUM],
   );
-
   const [selectedNetwork, setSelectedNetwork] = useState(
     SUPPORTED_CHAINS.ETHEREUM,
   );
-
   const [selectedAsset, setSelectedAsset] = useState<SelectOption>();
   const [networkNeedsChange, setNetworkNeedsChange] = useState<boolean>();
 
@@ -85,17 +76,6 @@ function TokenBridge() {
   };
 
   const handleClickBridge = async () => {
-    if (chainId !== CHAIN_IDS[selectedNetwork]) {
-      // SET_LOADING_MESSAGE('Changing networks . . . ');
-      await window.ethereum.request({
-        method: 'wallet_switchEthereumChain',
-        params: [{ chainId: selectedNetwork }],
-      });
-    }
-    brigeTo();
-  };
-
-  const brigeTo = () => {
     if (selectedNetwork === SUPPORTED_CHAINS.ETHEREUM) {
       bridgeAssetToAvax();
     } else {
@@ -104,25 +84,21 @@ function TokenBridge() {
   };
 
   const bridgeAssetToAvax = async () => {
-    setLoading(LOADING_STATE.TXN_WAIT);
+    if (!selectedAsset) {
+      return;
+    }
+
     try {
       const tx = await contract?.transferFrom(
         account,
-        WALLET_ADDRESS,
-        parseInt(selectedAsset?.value || '0'),
+        COMPANY_WALLET_ADDRESS,
+        parseInt(selectedAsset.value),
         { value: 0 },
       );
       const txReceipt = await tx.wait();
 
       if (txReceipt) {
-        checkBridgeAssetStatus(
-          account?.toString() || '',
-          WALLET_ADDRESS,
-          selectedAsset?.value || '0',
-          'out',
-          txReceipt.transactionHash,
-        );
-        store.dispatch(openOption());
+        console.info('txReceipt=======>', txReceipt);
       }
     } catch (e) {
       console.error(e);
@@ -130,44 +106,25 @@ function TokenBridge() {
   };
 
   const bridgeAssetToEth = async () => {
-    setLoading(LOADING_STATE.TXN_WAIT);
     try {
-      const txn = await contract?.bridgeBack(
+      const tx = await contract?.bridgeBack(
         parseInt(selectedAsset?.value || '0'),
         { value: 0 },
       );
-      const txnReceipt = await txn.wait();
-      if (txnReceipt) {
-        checkBridgeAssetStatus(
-          account?.toString() || '',
-          contractAddress,
-          selectedAsset?.value || '0',
-          'in',
-          txnReceipt.transactionHash,
-        );
-        setLoading(LOADING_STATE.OFF);
-        store.dispatch(openOption());
+      const txReceipt = await tx.wait();
+      if (txReceipt) {
+        console.info('txReceipt', txReceipt);
       }
     } catch (e) {
-      setLoading(LOADING_STATE.ERROR);
+      console.error(e);
     }
-  };
-
-  const checkBridgeAssetStatus = async (
-    from: string,
-    to: string,
-    id: string,
-    type: string,
-    transaction_hash: string,
-  ) => {
-    store.dispatch(addAssetToWaitCheker(from, to, id, type, transaction_hash));
   };
 
   return (
     <div className="container mx-auto h-full flex flex-col justify-center items-center">
       <div className="p-6 w-96 max-w-sm bg-white rounded-lg border border-gray-200 shadow-md dark:bg-gray-800 dark:border-gray-700">
         <Select
-          defaultValue={selectedNetwork}
+          value={selectedNetwork}
           label="From:"
           options={fromOptions}
           onChange={handleSelectNetwork}
@@ -178,6 +135,7 @@ function TokenBridge() {
           options={assets}
           onChange={handleSelectAssetId}
           className="mb-5"
+          value={selectedAsset?.value}
         />
         <div
           style={{
@@ -189,7 +147,7 @@ function TokenBridge() {
           }}
         >
           <Button
-            disabled={loading != 'OFF' ? true : false}
+            disabled={!selectedAsset}
             onClick={handleClickBridge}
             css={{ width: '250px', display: 'flex' }}
           >
@@ -219,38 +177,6 @@ function TokenBridge() {
           </label>
         </div>
       </div>
-
-      {loading == LOADING_STATE.TXN_WAIT && <Backdrop>Loading</Backdrop>}
-      {loading == LOADING_STATE.NTWRK_CHANGE && (
-        <Backdrop>
-          <LoadingSpinnerComponent message="Retrieving Your NFTs" />
-        </Backdrop>
-      )}
-      {loading == LOADING_STATE.ERROR && <span>Loading Error</span>}
-    </div>
-  );
-}
-
-function LoadingSpinnerComponent(props: { message: string }) {
-  return (
-    <div
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'center',
-        alignItems: 'center',
-      }}
-    >
-      <ClipLoader color={'#C39BD3'} size={150} />
-      <span
-        style={{
-          fontWeight: 'bold',
-          fontSize: '20px',
-          color: '#EFEDED',
-        }}
-      >
-        {props.message}
-      </span>
     </div>
   );
 }

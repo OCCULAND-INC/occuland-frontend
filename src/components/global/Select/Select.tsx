@@ -8,19 +8,13 @@ export interface SelectOption {
 
 interface SelectProps {
   className?: string;
-  defaultValue?: string;
   label?: string;
   onChange: (option: SelectOption) => void;
   options: Array<SelectOption>;
+  value?: string;
 }
 
-function Select({
-  defaultValue,
-  label,
-  options,
-  onChange,
-  className,
-}: SelectProps) {
+function Select({ value, label, options, onChange, className }: SelectProps) {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [selectedOption, setSelectedOption] = useState<SelectOption>();
 
@@ -36,17 +30,12 @@ function Select({
   };
 
   useEffect(() => {
-    if (defaultValue) {
-      const selectedOption = options.find(
-        (option) => option.value === defaultValue,
-      );
+    if (value) {
+      const selectedOption = options.find((option) => option.value === value);
 
       setSelectedOption(selectedOption);
-    } else {
-      const defaultOption = options[0];
-      setSelectedOption(defaultOption);
     }
-  }, [defaultValue, options]);
+  }, [value, options]);
 
   return (
     <div onClick={toggleOpen} className={className}>
@@ -69,7 +58,7 @@ function Select({
         >
           <span className="flex items-center">
             <span className="block">
-              {selectedOption?.text || 'No options'}
+              {selectedOption?.text || 'Select one'}
             </span>
           </span>
           <span className="ml-3 absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">

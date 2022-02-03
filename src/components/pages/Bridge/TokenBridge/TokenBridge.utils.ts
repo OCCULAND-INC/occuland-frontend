@@ -43,7 +43,8 @@ export const ABIS: { [key in SUPPORTED_CHAINS]: ContractInterface } = {
   [SUPPORTED_CHAINS.AVL]: OcculandAbi,
 };
 
-export const WALLET_ADDRESS = '0xb92bC1F5456e1E7B2971450D36FD2eBE73eeF70B';
+export const COMPANY_WALLET_ADDRESS =
+  '0xb92bC1F5456e1E7B2971450D36FD2eBE73eeF70B';
 
 // export const testMintLand = async () => {
 //   await window.ethereum.request({
