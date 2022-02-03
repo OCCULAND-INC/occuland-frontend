@@ -1,12 +1,10 @@
 import { Web3ReactProvider } from '@web3-react/core';
 import { ReactNode } from 'react';
-import { Provider, useDispatch, useSelector } from 'react-redux';
+import { MoralisProvider } from 'react-moralis';
+import { Provider } from 'react-redux';
 
-import Alert from '~/components/global/Alert/Alert';
-import { AlertType } from '~/components/global/Alert/Alert.types';
 import Layout from '~/components/global/Layout/Layout';
 import Sidebar from '~/components/global/SideBar/Sidebar';
-import Table from '~/components/global/Table/Table';
 import Web3Manager from '~/components/global/Web3Manager/Web3Manager';
 import getLibrary from '~/lib/utils/getLibrary';
 import { store } from '~/state/store';
@@ -17,95 +15,44 @@ interface Props {
   children: ReactNode;
 }
 
+const moralisConfig =
+  process.env.NODE_ENV === 'development'
+    ? {
+        appId: process.env.MORALIS_LOCAL_APP_ID || '',
+        serverUrl: process.env.MORALIS_TESTNET_SERVER_URL || '',
+      }
+    : {
+        appId: process.env.MORALIS_TESTNET_APP_ID || '',
+        serverUrl: process.env.MORALIS_TESTNET_SERVER_URL || '',
+      };
+
 function App({ children }: Props) {
   return (
     <Provider store={store}>
-      <Web3ReactProvider getLibrary={getLibrary}>
-        <Web3Manager>
-          <div className="flex">
-            <Sidebar />
-            <div
-              style={{
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'center',
-                overflow: 'hidden',
-                position: 'relative',
-                width: '100%',
-              }}
-            >
-              <Header />
-              <Layout>{children}</Layout>
+      <MoralisProvider {...moralisConfig} initializeOnMount>
+        <Web3ReactProvider getLibrary={getLibrary}>
+          <Web3Manager>
+            <div className="flex">
+              <Sidebar />
               <div
                 style={{
-                  bottom: '0',
-                  right: '10px',
-                  position: 'absolute',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'center',
+                  overflow: 'hidden',
+                  position: 'relative',
+                  width: '100%',
                 }}
               >
-                <ErrorNotification />
+                <Header />
+                <Layout>{children}</Layout>
               </div>
-              <BridgeWaitingTable />
             </div>
-          </div>
-        </Web3Manager>
-      </Web3ReactProvider>
+          </Web3Manager>
+        </Web3ReactProvider>
+      </MoralisProvider>
     </Provider>
   );
 }
 
 export default App;
-
-function ErrorNotification() {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const isOpen = useSelector((state: any) => state.errorReducer.isOpen);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const error = useSelector((state: any) => state.errorReducer.error);
-
-  const dispatch = useDispatch();
-
-  function handleClose() {
-    dispatch({ type: 'HIDE_ERROR' });
-  }
-
-  return (
-    <>
-      {isOpen && error && (
-        <div className="fancy-error-class">
-          <button onClick={handleClose}>
-            <Alert type={AlertType.ERROR} text={error} />
-          </button>
-        </div>
-      )}
-    </>
-  );
-}
-
-function BridgeWaitingTable() {
-  const isOpen = useSelector(
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (state: any) => state.toggleElementsReducer.isOpen,
-  );
-  return (
-    <>
-      {isOpen && (
-        <div
-          style={{
-            alignItems: 'center',
-            backgroundColor: 'rgb(1,1,1,0.5)',
-            display: 'flex',
-            flexDirection: 'column',
-            height: '100%',
-            justifyContent: 'flex-start',
-            overflow: 'scroll',
-            paddingTop: '100px',
-            position: 'absolute',
-            width: '100%',
-          }}
-        >
-          <Table />
-        </div>
-      )}
-    </>
-  );
-}

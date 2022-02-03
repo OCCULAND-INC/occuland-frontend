@@ -1,6 +1,7 @@
 import { ContractInterface } from '@ethersproject/contracts';
 import { Web3Provider } from '@ethersproject/providers';
 import { useWeb3React } from '@web3-react/core';
+import Moralis from 'moralis';
 import { useEffect, useState } from 'react';
 import ClipLoader from 'react-spinners/ClipLoader';
 
@@ -8,7 +9,6 @@ import Backdrop from '~/components/global/Backdrop/Backdrop';
 import Button from '~/components/global/Button/Button';
 import Select, { SelectOption } from '~/components/global/Select/Select';
 import { useContract } from '~/hooks/contracts';
-import { getAllAssetsFromOwner } from '~/lib/api/assets';
 import { addAssetToWaitCheker } from '~/state/polling/actions';
 import { store } from '~/state/store';
 import { openOption } from '~/state/utils/actions';
@@ -24,6 +24,7 @@ import {
   WALLET_ADDRESS,
 } from './TokenBridge.utils';
 
+type ChainType = 'ropsten';
 function TokenBridge() {
   const { account, chainId } = useWeb3React<Web3Provider>();
   const [loading, setLoading] = useState<LOADING_STATE>(LOADING_STATE.INIT);
@@ -46,21 +47,20 @@ function TokenBridge() {
 
   useEffect(() => {
     async function fetchAsset() {
-      const res = await getAllAssetsFromOwner(
-        account ? account : '',
-        contractAddress,
-        selectedNetwork,
-      );
+      const apiConfig = {
+        chain: selectedNetwork as ChainType,
+        address: account || '',
+      };
 
-      if (res.isSuccess) {
-        const options: Array<SelectOption> = res.data.result.map(
-          (item: { token_id: string }) => ({
-            text: item.token_id,
-            value: item.token_id,
-          }),
-        );
-        setAssets(options);
-      }
+      const { result } = await Moralis.Web3API.account.getNFTs(apiConfig);
+
+      const options: Array<SelectOption> = (result || []).map(
+        (item: { token_id: string }) => ({
+          text: item.token_id,
+          value: item.token_id,
+        }),
+      );
+      setAssets(options);
     }
 
     fetchAsset();
