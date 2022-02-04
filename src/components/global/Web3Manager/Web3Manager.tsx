@@ -6,6 +6,8 @@ import {
   useWeb3ManagerContext,
   Web3ManagerContextProvider,
 } from '~/contexts/Web3Manager.context';
+import useBlockNumberUpdate from '~/hooks/block';
+import { useSubscribeToTxQuery } from '~/hooks/transaction';
 import { isBrowser } from '~/lib/utils/browser';
 
 interface Props {
@@ -14,7 +16,9 @@ interface Props {
 
 function Web3Manager({ children }: Props) {
   const context = useWeb3React<Web3Provider>();
-  const { connector, active, error } = context;
+  const { connector, active, error, account } = context;
+
+  useSubscribeToTxQuery(account || '');
 
   isBrowser() && !window.__WEB3__CONTEXT__
     ? (window.__WEB3__CONTEXT__ = context)
@@ -47,6 +51,8 @@ function Web3Manager({ children }: Props) {
 }
 
 function Web3ManagerWithContext({ children }: Props) {
+  useBlockNumberUpdate();
+
   return (
     <Web3ManagerContextProvider>
       <Web3Manager>{children}</Web3Manager>

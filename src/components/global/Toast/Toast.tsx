@@ -6,18 +6,17 @@ import { randomString } from '~/lib/utils/string';
 
 export interface ToastProps extends AlertProps {
   icon?: ReactNode;
-  onClose?: () => void;
+  onClose?: (id: string) => void;
 }
 
 function Toast({ id, text, className = '', icon, onClose }: ToastProps) {
   const [isOpen, setIsOpen] = useState<boolean>(true);
+  const elementId = id ? id : `${randomString(10)}-alert`;
 
   const handleDismiss = () => {
     setIsOpen(false);
-    onClose && onClose();
+    onClose && onClose(elementId);
   };
-
-  const elementId = id ? id : `${randomString(10)}-alert`;
 
   if (!isOpen) {
     return null;

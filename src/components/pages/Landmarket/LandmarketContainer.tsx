@@ -36,7 +36,7 @@ function LandmarketContainer() {
         <div className="flex home-search-form">
           <Select
             label="Platform:"
-            defaultValue={platformSelection}
+            value={platformSelection}
             onChange={(e) =>
               setPlatformSelection(e.value != '0' ? e.value : platformSelection)
             }
@@ -48,7 +48,7 @@ function LandmarketContainer() {
           ></Select>
           <Select
             label="Availability:"
-            defaultValue={leaseType}
+            value={leaseType}
             onChange={(e) => setLeaseType(e.value != '0' ? e.value : leaseType)}
             options={[
               { text: 'All', value: '0' },

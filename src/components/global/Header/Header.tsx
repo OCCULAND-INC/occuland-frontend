@@ -55,6 +55,7 @@ const CONTAINER = styled.div`
 export default function Header() {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const data = useSelector((state: any) => state.assetCheckReducer);
+
   function toggleElement() {
     store.dispatch(openOption());
   }

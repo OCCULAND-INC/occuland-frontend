@@ -2,24 +2,32 @@ import { createReducer } from '@reduxjs/toolkit';
 
 import { ToastProps } from '~/components/global/Toast/Toast';
 
-import { updateBlockNumber, updateToast } from './actions';
+import { addToast, updateBlockNumber } from './actions';
 
 export interface ApplicationState {
   readonly blockNumber: { readonly [chainId: number]: number };
-  readonly toast: Partial<ToastProps> | null;
+  readonly toasts: Array<Partial<ToastProps>> | null;
 }
 
 const initialState: ApplicationState = {
   blockNumber: {},
-  toast: {
-    text: 'testing',
-  },
+  toasts: [
+    {
+      text: 'testing1',
+    },
+    {
+      text: 'testing2',
+    },
+  ],
 };
 
 export default createReducer(initialState, (builder) =>
   builder
-    .addCase(updateToast, (state, action) => {
-      state.toast = action.payload;
+    .addCase(addToast, (state, action) => {
+      if (!state.toasts) {
+        state.toasts = [];
+      }
+      state.toasts?.push(action.payload);
     })
     .addCase(updateBlockNumber, (state, action) => {
       const { chainId, blockNumber } = action.payload;

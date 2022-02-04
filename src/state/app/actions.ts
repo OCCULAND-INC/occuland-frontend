@@ -2,11 +2,10 @@ import { createAction } from '@reduxjs/toolkit';
 
 import { ToastProps } from '~/components/global/Toast/Toast';
 
-import { UPDATE_BLOCKNUMBER, UPDATE_TOAST } from './constants';
+import { ADD_TOAST, REMOVE_TOAST, UPDATE_BLOCKNUMBER } from './constants';
 
-export const updateToast = createAction<Partial<ToastProps> | null>(
-  UPDATE_TOAST,
-);
+export const addToast = createAction<Partial<ToastProps>>(ADD_TOAST);
+export const removeToast = createAction<{ id: string }>(REMOVE_TOAST);
 
 export const updateBlockNumber = createAction<{
   blockNumber: number;

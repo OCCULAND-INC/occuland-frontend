@@ -1,30 +1,32 @@
 import { useAppDispatch, useAppSelector } from '~/hooks/redux-hook';
-import { updateToast } from '~/state/app/actions';
+import { removeToast } from '~/state/app/actions';
 
 import { AlertType } from '../Alert/Alert.types';
 import Toast from './Toast';
 
 function ToastContainer() {
-  const { toast } = useAppSelector((state) => state.app);
+  const { toasts } = useAppSelector((state) => state.app);
   const dispatch = useAppDispatch();
 
-  if (!toast) {
+  if (!toasts) {
     return null;
   }
 
-  const handleClose = () => {
-    dispatch(updateToast(null));
+  const handleClose = (id: string) => {
+    dispatch(removeToast({ id }));
   };
 
   return (
     <div className="absolute right-5 bottom-5">
-      <Toast
-        id="global-toast"
-        text={toast.text ?? ''}
-        icon={toast.icon}
-        type={toast.type || AlertType.NORMAL}
-        onClose={handleClose}
-      />
+      {toasts.map((toast, index) => (
+        <Toast
+          key={`global-toast-${index}`}
+          text={toast.text ?? ''}
+          icon={toast.icon}
+          type={toast.type || AlertType.NORMAL}
+          onClose={handleClose}
+        />
+      ))}
     </div>
   );
 }
