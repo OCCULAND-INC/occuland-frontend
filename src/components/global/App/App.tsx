@@ -5,7 +5,6 @@ import { Provider, useDispatch, useSelector } from 'react-redux';
 import Alert from '~/components/global/Alert/Alert';
 import { AlertType } from '~/components/global/Alert/Alert.types';
 import Layout from '~/components/global/Layout/Layout';
-import Sidebar from '~/components/global/SideBar/Sidebar';
 import Table from '~/components/global/Table/Table';
 import Web3Manager from '~/components/global/Web3Manager/Web3Manager';
 import getLibrary from '~/lib/utils/getLibrary';
@@ -21,7 +20,7 @@ function App({ children }: Props) {
       <Web3ReactProvider getLibrary={getLibrary}>
         <Web3Manager>
           <div className="flex">
-            <Sidebar />
+            {/*<Sidebar />*/}
             <div
               style={{
                 display: 'flex',
