@@ -17,7 +17,14 @@ function Sidebar() {
   };
 
   return (
-    <nav className="bg-gray-800 flex flex-col flex-shrink-0 h-screen items-center py-10 px-5 rounded-tr-4xl rounded-br-4xl shadow-2xl drop-shadow-2xl">
+    <nav
+      className="flex flex-col flex-shrink-0 h-screen items-center py-10 px-5 rounded-tr-4xl rounded-br-4xl shadow-2xl drop-shadow-2xl"
+      style={{
+        fontFamily: 'roboto',
+        fontWeight: '500',
+        backgroundColor: '#141414',
+      }}
+    >
       <div className="mb-8 cursor-pointer">
         <Image src={Logo} width={120} height={120} onClick={handleLogoClick} />
       </div>
