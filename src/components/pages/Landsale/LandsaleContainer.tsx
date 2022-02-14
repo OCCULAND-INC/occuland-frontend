@@ -599,7 +599,7 @@ function Modal(props: any) {
                 <label style={{ fontWeight: '800' }}>
                   Proxmity to Public Spaces
                 </label>
-                {props.item.attributes.map((el: any, index: number) =>
+                {props.item.attributes?.map((el: any, index: number) =>
                   el['trait_type'] != 'X' && el['trait_type'] != 'Y' ? (
                     <li key={index} className="tag">
                       <label>{el['trait_type']}:</label>
