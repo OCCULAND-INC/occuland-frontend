@@ -11,8 +11,6 @@ import Web3Manager from '~/components/global/Web3Manager/Web3Manager';
 import getLibrary from '~/lib/utils/getLibrary';
 import { store } from '~/state/store';
 
-import Header from '../Header/Header';
-
 interface Props {
   children: ReactNode;
 }
