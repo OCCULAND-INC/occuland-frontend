@@ -159,7 +159,10 @@ function LandsaleContainer() {
     return <div>loading . . .</div>;
   }
   return (
-    <div className="container mx-auto max-h-screen flex flex-wrap overflow-scroll">
+    <div
+      className="xs:max-h-screen xs:flex xs:flex-wrap xs:overflow-scroll sm:container sm:mx-auto sm:max-h-screen sm:flex sm:flex-wrap sm:overflow-scroll"
+      style={{ width: '100vw' }}
+    >
       <div
         style={{
           display: 'flex',
@@ -546,12 +549,10 @@ const MODAL_CONTAINER = styled.div<StyledProps>`
     }
     .exit-modal {
       position: absolute;
-      top: -22%;
-      right: -22px;
-      font-size: 50px;
-      font-weight: 200;
-      color: white;
+      top: -7%;
+      right: -3%;
       cursor: pointer;
+      border-radius: 100%;
     }
   }
 `;
@@ -647,7 +648,20 @@ function Modal(props: any) {
           </div>
         </div>
         <div className="exit-modal" onClick={() => exitModal()}>
-          x
+          <svg
+            className="w-16 h-16"
+            fill="purple"
+            stroke="white"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="1"
+              d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
+            ></path>
+          </svg>
         </div>
       </div>
     </MODAL_CONTAINER>

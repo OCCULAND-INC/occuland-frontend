@@ -18,7 +18,7 @@ function Sidebar() {
 
   return (
     <nav
-      className="flex flex-col flex-shrink-0 h-screen items-center py-10 px-5 rounded-tr-4xl rounded-br-4xl shadow-2xl drop-shadow-2xl"
+      className=" xs:hidden sm:flex sm:flex-col sm:flex-shrink-0 sm:h-screen sm:items-center sm:py-10 sm:px-5 sm:rounded-tr-4xl sm:rounded-br-4xl sm:shadow-2xl sm:drop-shadow-2xl"
       style={{
         fontFamily: 'roboto',
         fontWeight: '500',
