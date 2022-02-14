@@ -34,7 +34,7 @@ function App({ children }: Props) {
                 width: '100%',
               }}
             >
-              <Header />
+              {/*<Header />*/}
               <Layout>{children}</Layout>
               <div
                 style={{

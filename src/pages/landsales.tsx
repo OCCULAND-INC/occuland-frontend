@@ -1,7 +1,7 @@
 import LandsaleContainer from '~/components/pages/Landsale/LandsaleContainer';
 
-function Home() {
+function BridgePage() {
   return <LandsaleContainer />;
 }
 
-export default Home;
+export default BridgePage;
