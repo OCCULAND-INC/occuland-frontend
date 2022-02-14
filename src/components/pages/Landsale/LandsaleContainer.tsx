@@ -2,7 +2,6 @@
 import styled from '@emotion/styled';
 import { createClient } from '@supabase/supabase-js';
 import { useEffect, useState } from 'react';
-import ReactPaginate from 'react-paginate';
 import ClipLoader from 'react-spinners/ClipLoader';
 
 import { LOADING_STATE } from '../loading.types';
@@ -13,11 +12,49 @@ const supabase = createClient(
 );
 
 const PAGINATION = styled.div`
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  z-index: 10;
+  background-color: white;
+  color: black;
   width: 100%;
+  height: 50px;
   display: flex;
   flex-direction: row;
   justify-content: center;
   align-items: center;
+  .page-control {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    ul {
+      width: 100%;
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+      padding: 0;
+      margin: 0;
+      li {
+        padding: 0px 3%;
+        button {
+          background-color: purple;
+          color: white;
+          padding: 10px;
+          width: 130px;
+          border-radius: 10px;
+          font-weight: 800;
+        }
+        select {
+          border-radius: 10px;
+          text-align: center;
+          color: purple;
+          border: solid purple 0.5px;
+        }
+      }
+    }
+  }
   .page-li {
     background-color: #efefef;
     width: 30px;
@@ -114,6 +151,7 @@ function LandsaleContainer() {
   const [showModal, setShowModal] = useState(false);
   const [selectedCard, setSelectedCard] = useState<any>();
   const [cardDetails, setCardDetails] = useState([]);
+  const [pages, setPages] = useState([]);
 
   useEffect(() => {
     getPrice(setManaUSDPrice);
@@ -129,6 +167,20 @@ function LandsaleContainer() {
       });
   }, []);
 
+  useEffect(() => {
+    if (pageCount) {
+      generatePages();
+    }
+  }, [pageCount]);
+
+  const generatePages = () => {
+    const pg: any = [];
+    for (let i = 1; i <= pageCount; i++) {
+      pg.push(i);
+    }
+    setPages(pg);
+  };
+
   const handleCardClick = (id: number, obj: any) => () => {
     getPrice(setManaUSDPrice);
     setCardDetails([]);
@@ -136,12 +188,18 @@ function LandsaleContainer() {
     setSelectedCard(obj);
     setShowModal(true);
   };
+  const prevPageClick = () => {
+    handlePageClick(currPage - 1);
+  };
+  const nextPageClick = () => {
+    handlePageClick(currPage + 1);
+  };
   const handlePageClick = (event: any) => {
     // eslint-disable-next-line no-console
     console.log(event);
     setLoading(LOADING_STATE.INIT);
-    setCurrPage(event.selected + 1);
-    const newOffset = ((event.selected + 1) * 9) % itemCounts;
+    setCurrPage(event);
+    const newOffset = (event * 9) % itemCounts;
     // eslint-disable-next-line no-console
     console.log(`newOffset: ${newOffset}`);
     setItemOffset(newOffset);
@@ -159,12 +217,7 @@ function LandsaleContainer() {
     return <div>loading . . .</div>;
   }
   return (
-    <div
-      className="xs:max-h-screen xs:flex xs:flex-wrap xs:overflow-scroll sm:container sm:mx-auto sm:max-h-screen sm:flex sm:flex-wrap sm:overflow-scroll"
-      style={{
-        width: '100vw',
-      }}
-    >
+    <div className="xs:max-h-screen xs:flex xs:flex-wrap xs:overflow-x-hidden xs:overflow-y-scroll sm:container sm:mx-auto sm:max-h-screen sm:flex sm:flex-wrap sm:overflow-scroll">
       <div
         style={{
           display: 'flex',
@@ -188,18 +241,28 @@ function LandsaleContainer() {
           />
         ))}
         <PAGINATION>
-          <ReactPaginate
-            className="pagination"
-            pageClassName="page-li"
-            breakLabel="..."
-            nextLabel="next >"
-            pageCount={pageCount}
-            pageRangeDisplayed={9}
-            renderOnZeroPageCount={() => {}}
-            onPageChange={(e: any) => handlePageClick(e)}
-            previousLabel="< previous"
-            forcePage={currPage}
-          />
+          <div className="page-control">
+            <ul>
+              <li>
+                <button onClick={prevPageClick}>{'<< Prev Page'}</button>
+              </li>
+              <li>
+                <select
+                  defaultValue={currPage}
+                  onChange={(e) => handlePageClick(e.target.value)}
+                >
+                  {pages.map((el: any, index: any) => (
+                    <option key={index} value={el}>
+                      {el}
+                    </option>
+                  ))}
+                </select>
+              </li>
+              <li>
+                <button onClick={nextPageClick}>{'Next Page >>'}</button>
+              </li>
+            </ul>
+          </div>
         </PAGINATION>
         <Modal
           show={showModal}
