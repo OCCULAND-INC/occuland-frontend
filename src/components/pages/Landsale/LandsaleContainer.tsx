@@ -159,12 +159,7 @@ function LandsaleContainer() {
     return <div>loading . . .</div>;
   }
   return (
-    <div
-      className="xs:max-h-screen xs:flex xs:flex-wrap xs:overflow-scroll sm:container sm:mx-auto sm:max-h-screen sm:flex sm:flex-wrap sm:overflow-scroll"
-      style={{
-        width: '100vw',
-      }}
-    >
+    <div className="xs:max-h-screen xs:flex xs:flex-wrap xs:overflow-x-hidden xs:overflow-y-scroll sm:container sm:mx-auto sm:max-h-screen sm:flex sm:flex-wrap sm:overflow-scroll">
       <div
         style={{
           display: 'flex',
