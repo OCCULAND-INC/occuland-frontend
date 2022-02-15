@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import styled from '@emotion/styled';
 import { useEffect, useState } from 'react';
+import { CalendlyEventListener, PopupButton } from 'react-calendly';
 import ClipLoader from 'react-spinners/ClipLoader';
 
 interface StyledProps {
@@ -91,9 +92,10 @@ const MODAL_CONTAINER = styled.div<StyledProps>`
               font-weight: 600;
               font-size: 20px;
               color: rgb(1, 1, 1, 0.8);
+              margin-bottom: 5px;
             }
             .email-container {
-              width: 90%;
+              width: 50%;
               border: solid 0.5px #ccc;
               border-radius: 10px;
               display: flex;
@@ -167,56 +169,66 @@ export default function LandInfoModal(props: any) {
     setLoading(true);
     props.ShowModal();
   }
+  function bookButtonClicked() {
+    console.log('bookButtonClicked');
+  }
+  function eventScheduled(obj: any) {
+    console.log(obj);
+  }
   return (
     <MODAL_CONTAINER show={props.show}>
-      <div className="modal-content-container">
-        <div className="modal-content">
-          <div className="content-info">
-            {!loading ? (
+      <CalendlyEventListener
+        onEventTypeViewed={bookButtonClicked}
+        onEventScheduled={(data: any) => eventScheduled(data)}
+      >
+        <div className="modal-content-container">
+          <div className="modal-content">
+            <div className="content-info">
+              {!loading ? (
+                <ul>
+                  <li>
+                    <label>MANA:</label>
+                    <span>{props.card.price_easy}</span>
+                  </li>
+                  <li>
+                    <label>USD:</label>
+                    <span>
+                      $
+                      {(props.card.price_easy * props.usdPrice)
+                        .toFixed(2)
+                        .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')}
+                    </span>
+                  </li>
+                  <label style={{ fontWeight: '800' }}>
+                    Proxmity to Public Spaces
+                  </label>
+                  {props.item.attributes?.map((el: any, index: number) =>
+                    el['trait_type'] != 'X' && el['trait_type'] != 'Y' ? (
+                      <li key={index} className="tag">
+                        <label>{el['trait_type']}:</label>
+                        <span>{el['value']} Parcels</span>
+                      </li>
+                    ) : null,
+                  )}
+                </ul>
+              ) : (
+                <div className="load">
+                  <ClipLoader color={'#C39BD3'} size={120} />
+                </div>
+              )}
+            </div>
+
+            <div className="content-options">
               <ul>
                 <li>
-                  <label>MANA:</label>
-                  <span>{props.card.price_easy}</span>
-                </li>
-                <li>
-                  <label>USD:</label>
-                  <span>
-                    $
-                    {(props.card.price_easy * props.usdPrice)
-                      .toFixed(2)
-                      .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')}
-                  </span>
-                </li>
-                <label style={{ fontWeight: '800' }}>
-                  Proxmity to Public Spaces
-                </label>
-                {props.item.attributes?.map((el: any, index: number) =>
-                  el['trait_type'] != 'X' && el['trait_type'] != 'Y' ? (
-                    <li key={index} className="tag">
-                      <label>{el['trait_type']}:</label>
-                      <span>{el['value']} Parcels</span>
-                    </li>
-                  ) : null,
-                )}
-              </ul>
-            ) : (
-              <div className="load">
-                <ClipLoader color={'#C39BD3'} size={120} />
-              </div>
-            )}
-          </div>
-
-          <div className="content-options">
-            <ul>
-              <li>
-                <label>Talk with an Expert:</label>
-                <div className="email-container">
-                  <input
+                  <label>Talk with an Expert:</label>
+                  <div className="email-container">
+                    {/* <input
                     onChange={(e) => setLead(e.target.value)}
                     type="text"
                     placeholder="youremail@email.com"
                   />
-                  <button onClick={() => addLead()}>
+                                   <button onClick={() => addLead()}>
                     <svg
                       className="w-6 h-6"
                       fill="none"
@@ -231,29 +243,39 @@ export default function LandInfoModal(props: any) {
                         d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"
                       ></path>
                     </svg>
-                  </button>
-                </div>
-              </li>
-            </ul>
+            </button>*/}
+                    <PopupButton
+                      text="Book a Meeting"
+                      url="https://calendly.com/occuland/virtual-land-informational"
+                      styles={{
+                        border: 'solid 10x red',
+                        height: '30px',
+                        width: '100%',
+                      }}
+                    />
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </div>
+          <div className="exit-modal" onClick={() => exitModal()}>
+            <svg
+              className="w-16 h-16"
+              fill="purple"
+              stroke="white"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="1"
+                d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
+              ></path>
+            </svg>
           </div>
         </div>
-        <div className="exit-modal" onClick={() => exitModal()}>
-          <svg
-            className="w-16 h-16"
-            fill="purple"
-            stroke="white"
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="1"
-              d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
-            ></path>
-          </svg>
-        </div>
-      </div>
+      </CalendlyEventListener>
     </MODAL_CONTAINER>
   );
 }
