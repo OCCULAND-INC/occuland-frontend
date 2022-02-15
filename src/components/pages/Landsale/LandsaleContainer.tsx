@@ -1,13 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { createClient } from '@supabase/supabase-js';
 import { useEffect, useState } from 'react';
-import { CenturyView } from 'react-calendar';
 import InfiniteScroll from 'react-infinite-scroll-component';
 
 import { LOADING_STATE } from '../loading.types';
 import LandCard from './LandCard';
 import LandInfoModal from './LandInfoModal';
-import PageControl from './PageControl';
 
 const supabase = createClient(
   'https://gjlbvpaiezrovocjokmk.supabase.co',
@@ -90,13 +88,11 @@ function LandsaleContainer() {
   const [items, setItems] = useState<any[]>([]);
   const [itemCounts, setItemCounts] = useState(0);
   const [itemOffset, setItemOffset] = useState(11);
-  const [pageCount, setPageCount] = useState(0);
   const [currPage, setCurrPage] = useState(1);
   const [manaUSDPrice, setManaUSDPrice] = useState(0);
   const [showModal, setShowModal] = useState(false);
   const [selectedCard, setSelectedCard] = useState<any>();
   const [cardDetails, setCardDetails] = useState([]);
-  const [pages, setPages] = useState([]);
 
   useEffect(() => {
     getPrice(setManaUSDPrice);
@@ -104,27 +100,13 @@ function LandsaleContainer() {
       .then((result: any) => {
         setItems((prevItem: any) => [...prevItem, ...result[0]]);
         setItemCounts(result[1]);
-        setPageCount(Math.ceil(result[1] / 9));
+        //setPageCount(Math.ceil(result[1] / 9));
         setLoading(LOADING_STATE.OFF);
       })
       .catch(() => {
         setLoading(LOADING_STATE.ERROR);
       });
   }, []);
-
-  useEffect(() => {
-    if (pageCount) {
-      generatePages();
-    }
-  }, [pageCount]);
-
-  const generatePages = () => {
-    const pg: any = [];
-    for (let i = 1; i <= pageCount; i++) {
-      pg.push(i);
-    }
-    setPages(pg);
-  };
 
   const handleCardClick = (id: number, obj: any) => () => {
     getPrice(setManaUSDPrice);
