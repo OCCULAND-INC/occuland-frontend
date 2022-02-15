@@ -76,11 +76,11 @@ const getLandDetails = async (
       console.error(err);
     });
 };
-const insertLead = async (email: string, assetId: string) => {
+const insertLead = async (calendly: string, assetId: string) => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { data, error } = await supabase
-    .from('leads')
-    .insert({ email, assetId }, { returning: 'minimal' });
+    .from('calendly')
+    .insert({ calendly, assetId }, { returning: 'minimal' });
 };
 
 function LandsaleContainer() {
