@@ -150,7 +150,6 @@ const MODAL_CONTAINER = styled.div<StyledProps>`
 `;
 export default function LandInfoModal(props: any) {
   const [loading, setLoading] = useState(true);
-  const [lead, setLead] = useState<string>('');
   useEffect(() => {
     if (props.item.id) {
       // eslint-disable-next-line no-console
@@ -158,29 +157,17 @@ export default function LandInfoModal(props: any) {
       setTimeout(() => setLoading(false), 2000);
     }
   }, [props.item]);
-  async function addLead() {
-    setLoading(true);
-    await props.addLead(lead, props.item.id);
-    setLead('');
-    setTimeout(() => setLoading(false), 2000);
+  async function addLead(obj: any) {
+    await props.addLead(obj.data.payload.invitee.uri, props.item.id);
     exitModal();
   }
   function exitModal() {
     setLoading(true);
     props.ShowModal();
   }
-  function bookButtonClicked() {
-    console.log('bookButtonClicked');
-  }
-  function eventScheduled(obj: any) {
-    console.log(obj);
-  }
   return (
     <MODAL_CONTAINER show={props.show}>
-      <CalendlyEventListener
-        onEventTypeViewed={bookButtonClicked}
-        onEventScheduled={(data: any) => eventScheduled(data)}
-      >
+      <CalendlyEventListener onEventScheduled={(data: any) => addLead(data)}>
         <div className="modal-content-container">
           <div className="modal-content">
             <div className="content-info">
