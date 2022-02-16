@@ -187,7 +187,7 @@ export default function LandInfoModal(props: any) {
                     </span>
                   </li>
                   <label style={{ fontWeight: '800' }}>
-                    Proxmity to Public Spaces
+                    Proximity to Public Spaces
                   </label>
                   {props.item.attributes?.map((el: any, index: number) =>
                     el['trait_type'] != 'X' && el['trait_type'] != 'Y' ? (
