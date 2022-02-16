@@ -3,6 +3,8 @@ import { createClient } from '@supabase/supabase-js';
 import { useEffect, useState } from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
 
+import Filter from '~/components/global/Filter/Filter';
+
 import { LOADING_STATE } from '../loading.types';
 import LandCard from './LandCard';
 import LandInfoModal from './LandInfoModal';
@@ -138,6 +140,7 @@ function LandsaleContainer() {
   }
   return (
     <div className="xs:max-h-screen xs:flex xs:flex-wrap xs:overflow-x-hidden xs:overflow-y-scroll sm:container sm:mx-auto sm:max-h-screen sm:flex sm:flex-wrap">
+      <Filter />
       <div
         id="scrollableDiv"
         style={{
