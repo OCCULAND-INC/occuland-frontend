@@ -201,7 +201,7 @@ function LandsaleContainer() {
             padding: '20px',
             position: 'absolute',
             width: '100%',
-            zIndex: '100',
+            zIndex: '0',
           }}
         >
           <ChevronDoubleDownIcon style={{ color: '#ccc', height: '50px' }} />
