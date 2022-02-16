@@ -4735,6 +4735,11 @@ react-calendar@^3.5.0:
     merge-class-names "^1.1.1"
     prop-types "^15.6.0"
 
+react-calendly@^2.2.3:
+  version "2.2.3"
+  resolved "https://registry.yarnpkg.com/react-calendly/-/react-calendly-2.2.3.tgz#3ed3fca006a02bbeca7d3b257787e376f54b3d34"
+  integrity sha512-+OkZE4ZrOYoeEbhOEw9mljruvnMlT6a114mpNx27tL5FEmRiJA+Tn1NJvTqYuF1p+BF7p3WQTWO+ZD45Uu7iBQ==
+
 react-dom@17.0.2:
   version "17.0.2"
   resolved "https://registry.npmjs.org/react-dom/-/react-dom-17.0.2.tgz"
@@ -4753,6 +4758,13 @@ react-dom@^16.8.6:
     object-assign "^4.1.1"
     prop-types "^15.6.2"
     scheduler "^0.19.1"
+
+react-infinite-scroll-component@^6.1.0:
+  version "6.1.0"
+  resolved "https://registry.yarnpkg.com/react-infinite-scroll-component/-/react-infinite-scroll-component-6.1.0.tgz#7e511e7aa0f728ac3e51f64a38a6079ac522407f"
+  integrity sha512-SQu5nCqy8DxQWpnUVLx7V7b7LcA37aM7tvoWjTLZp1dk6EJibM5/4EJKzOnl07/BsM1Y40sKLuqjCwwH/xV0TQ==
+  dependencies:
+    throttle-debounce "^2.1.0"
 
 react-is@17.0.2, react-is@^17.0.2:
   version "17.0.2"
@@ -5384,6 +5396,11 @@ text-table@^0.2.0:
   version "0.2.0"
   resolved "https://registry.npmjs.org/text-table/-/text-table-0.2.0.tgz"
   integrity sha1-f17oI66AUgfACvLfSoTsP8+lcLQ=
+
+throttle-debounce@^2.1.0:
+  version "2.3.0"
+  resolved "https://registry.yarnpkg.com/throttle-debounce/-/throttle-debounce-2.3.0.tgz#fd31865e66502071e411817e241465b3e9c372e2"
+  integrity sha512-H7oLPV0P7+jgvrk+6mwwwBDmxTaxnu9HMXmloNLXwnNO0ZxZ31Orah2n8lU1eMPvsaowP2CX+USCgyovXfdOFQ==
 
 through2@~0.4.1:
   version "0.4.2"
