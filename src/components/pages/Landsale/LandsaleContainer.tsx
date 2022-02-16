@@ -1,3 +1,6 @@
+import { keyframes } from '@emotion/react';
+import styled from '@emotion/styled';
+import { ChevronDoubleDownIcon } from '@heroicons/react/solid';
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { createClient } from '@supabase/supabase-js';
 import { useEffect, useState } from 'react';
@@ -6,6 +9,37 @@ import InfiniteScroll from 'react-infinite-scroll-component';
 import { LOADING_STATE } from '../loading.types';
 import LandCard from './LandCard';
 import LandInfoModal from './LandInfoModal';
+
+const rotate = keyframes`
+from, 20%, 53%, 80%, to {
+  transform: translate3d(0,0,0);
+  opacity: 1
+}
+
+40%, 43% {
+  transform: translate3d(0, -1px, 0);
+  opacity: 0.2
+}
+
+70% {
+  transform: translate3d(0, -1px, 0);
+  opacity: 0.4
+}
+
+90% {
+  transform: translate3d(0,-1px,0);
+  opacity: 1
+}
+`;
+
+const SCROLL_INDICATOR = styled.div`
+  svg {
+    path {
+      color: #ccc;
+      animation: ${rotate} 2.5s linear infinite;
+    }
+  }
+`;
 
 const supabase = createClient(
   'https://gjlbvpaiezrovocjokmk.supabase.co',
@@ -156,6 +190,23 @@ function LandsaleContainer() {
           usdPrice={manaUSDPrice}
           addLead={insertLead}
         />
+        <SCROLL_INDICATOR
+          style={{
+            bottom: '0',
+            color: '#ccc',
+            display: 'flex',
+            fontSize: '20px',
+            justifyContent: 'space-between',
+            left: '0',
+            padding: '20px',
+            position: 'absolute',
+            width: '100%',
+            zIndex: '100',
+          }}
+        >
+          <ChevronDoubleDownIcon style={{ color: '#ccc', height: '50px' }} />
+          <ChevronDoubleDownIcon style={{ color: '#ccc', height: '50px' }} />
+        </SCROLL_INDICATOR>
         <InfiniteScroll
           style={{
             display: 'flex',
