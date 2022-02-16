@@ -76,14 +76,14 @@ const FILTER_INDICATOR = styled.div<StyledProps>`
     z-index: 1;
     svg {
       height: 50px;
-      background-color: purple;
+      background-color: #ccc;
       border-radius: 100%;
       padding: 5px;
       path {
         color: white;
       }
       :hover {
-        background-color: red;
+        background-color: purple;
       }
     }
     .filter-modal {

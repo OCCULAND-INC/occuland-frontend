@@ -26,7 +26,7 @@ from, 20%, 53%, 80%, to {
 const SCROLL_INDICATOR = styled.div`
   svg {
     path {
-      color: #ccc;
+      color: #efefef;
       animation: ${bouncy} 2.5s linear infinite;
     }
   }
@@ -36,7 +36,7 @@ export default function ScrollIndicator() {
     <SCROLL_INDICATOR
       style={{
         bottom: '0',
-        color: '#ccc',
+        color: '#efefef',
         display: 'flex',
         fontSize: '20px',
         justifyContent: 'space-between',
@@ -48,8 +48,8 @@ export default function ScrollIndicator() {
       }}
     >
       {' '}
-      <ChevronDoubleDownIcon style={{ color: '#ccc', height: '50px' }} />
-      <ChevronDoubleDownIcon style={{ color: '#ccc', height: '50px' }} />
+      <ChevronDoubleDownIcon style={{ color: '#efefef', height: '50px' }} />
+      <ChevronDoubleDownIcon style={{ color: '#efefef', height: '50px' }} />
     </SCROLL_INDICATOR>
   );
 }
