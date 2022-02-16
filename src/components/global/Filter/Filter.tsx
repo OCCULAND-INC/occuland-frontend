@@ -72,18 +72,20 @@ const FILTER_INDICATOR = styled.div<StyledProps>`
     position: relative;
     height: 0px;
     border-radius: 100%;
-    box-shadow: 0px 0px 15px 1px rgb(1, 1, 1, 0.3);
     z-index: 1;
     svg {
       height: 50px;
       background-color: #ccc;
       border-radius: 100%;
       padding: 5px;
+      color: white;
+      box-shadow: 0px 0px 5px 1px #292828;
       path {
         color: white;
       }
       :hover {
         background-color: purple;
+        box-shadow: 0px 0px 0px 0px #292828;
       }
     }
     .filter-modal {
@@ -91,7 +93,7 @@ const FILTER_INDICATOR = styled.div<StyledProps>`
       z-index: 1;
       left: 0;
       top: 0;
-      background-color: #ccc;
+      background-color: #141414;
       height: 100vh;
       opacity: 0;
       ${'@media (min-width: 500px)'} {animation: ${(StyledProps) =>
@@ -120,6 +122,7 @@ const FILTER_INDICATOR = styled.div<StyledProps>`
 
 const FILTER_CONTAINER = styled.div<StyledProps>`
   height: 100%;
+  color: white;
   flex-direction: column;
   flex-wrap: none;
   opacity: 0;
@@ -139,18 +142,38 @@ const FILTER_CONTAINER = styled.div<StyledProps>`
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    h3 {
+    label {
+      padding-left: 10px;
+      font-weight: 600;
       align-self: flex-start;
+    }
+    label:first-child {
+      padding-top: 10px;
+    }
+    hr {
+      margin: 20px 0px;
+      border: none;
+      height: 0.5px;
+      width: 100%;
+      background-color: #efefef;
+      color: red;
     }
     button {
       min-width: 80%;
       width: 80%;
       padding: 10px 2px;
       margin: 10px 0px;
+      border-radius: 5px;
+      border: solid 0.5px #141414;
+      font-size: 14px;
+      height: 40px;
+      box-shadow: 0px 0px 6px 1px #b53ebd;
+      background-color: #212121;
       :hover {
         background-color: purple;
         color: white;
         border: none;
+        box-shadow: 0px 0px 0px 0px #ccc;
       }
     }
   }
@@ -171,11 +194,15 @@ export default function Filter() {
         <div className="filter-modal">
           <FILTER_CONTAINER show={showFilterModal}>
             <div>
-              <h3>Platforms:</h3>
+              <label>Platforms:</label>
               <button>All</button>
               <button>Decentraland</button>
               <button>The Sandbox</button>
               <button>Somnium Space</button>
+              <hr></hr>
+              <label>Price:</label>
+              <button>Low to High</button>
+              <button>High to Low</button>
             </div>
           </FILTER_CONTAINER>
         </div>
