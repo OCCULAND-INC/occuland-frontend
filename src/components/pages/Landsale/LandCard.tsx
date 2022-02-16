@@ -69,7 +69,7 @@ const BROKERCARD = styled.div`
         }
       }
       li:last-child {
-        font-size: 12px;
+        font-size: 11px;
         width: 40%;
         display: flex;
         justify-content: center;
