@@ -1,7 +1,10 @@
 import { css, keyframes } from '@emotion/react';
 import styled from '@emotion/styled';
 import { FilterIcon } from '@heroicons/react/solid';
+import Image from 'next/image';
 import { useState } from 'react';
+
+import LogoText from '~/assets/logo/logo_text.png';
 
 interface StyledProps {
   show: number;
@@ -230,6 +233,16 @@ export default function Filter() {
               <label>Price:</label>
               <button>Low to High</button>
               <button>High to Low</button>
+            </div>
+            <div
+              style={{
+                position: 'absolute',
+                bottom: '0',
+                padding: '0px 10px',
+                height: '70px',
+              }}
+            >
+              <Image src={LogoText} />
             </div>
           </FILTER_CONTAINER>
         </div>
