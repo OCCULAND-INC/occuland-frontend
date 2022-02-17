@@ -15,7 +15,7 @@ const supabase = createClient(
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdqbGJ2cGFpZXpyb3ZvY2pva21rIiwicm9sZSI6ImFub24iLCJpYXQiOjE2NDQzMzM4NTUsImV4cCI6MTk1OTkwOTg1NX0.Er7P__CL1qse_GnYZu7nl9nV2OSsPFVVv7nGo7AYNbw',
 );
 
-const getItems = (offset: number) =>
+const getItems = (offset: number, asc: boolean) =>
   // eslint-disable-next-line no-async-promise-executor
   new Promise(async (resolve: any, reject: any) => {
     const { data, error, count } = await supabase
@@ -23,7 +23,7 @@ const getItems = (offset: number) =>
       .select('*', {
         count: 'exact',
       })
-      .order('price_easy', { ascending: true })
+      .order('price_easy', { ascending: asc })
       .range(offset - 11, offset);
     if (!error) {
       await data?.map((el: any) => {
@@ -88,6 +88,7 @@ const insertLead = async (calendly: string, assetId: string) => {
 
 function LandsaleContainer() {
   const [loading, setLoading] = useState<LOADING_STATE>(LOADING_STATE.INIT);
+  const [itemsSort, setItemsSort] = useState<boolean>(true);
   const [items, setItems] = useState<any[]>([]);
   const [itemCounts, setItemCounts] = useState(0);
   const [itemOffset, setItemOffset] = useState(11);
@@ -99,7 +100,7 @@ function LandsaleContainer() {
 
   useEffect(() => {
     getPrice(setManaUSDPrice);
-    getItems(itemOffset)
+    getItems(itemOffset, itemsSort)
       .then((result: any) => {
         setItems((prevItem: any) => [...prevItem, ...result[0]]);
         setItemCounts(result[1]);
@@ -126,7 +127,7 @@ function LandsaleContainer() {
     setCurrPage(event);
     const newOffset = (event * 11) % itemCounts;
     setItemOffset(newOffset);
-    getItems(newOffset)
+    getItems(newOffset, itemsSort)
       .then((result: any) => {
         setItems((prevItem: any) => [...prevItem, ...result[0]]);
       })
@@ -134,13 +135,28 @@ function LandsaleContainer() {
         setLoading(LOADING_STATE.ERROR);
       });
   };
-
+  function sortPrice(sort_type: boolean) {
+    setItemsSort(sort_type);
+    getItems(itemOffset, sort_type)
+      .then((result: any) => {
+        setItems(result[0]);
+        setItemCounts(result[1]);
+        //setPageCount(Math.ceil(result[1] / 9));
+        setLoading(LOADING_STATE.OFF);
+      })
+      .catch(() => {
+        setLoading(LOADING_STATE.ERROR);
+      });
+  }
   if (loading == 'INIT') {
     return <div>loading . . .</div>;
   }
   return (
     <div className="xs:max-h-screen xs:flex xs:flex-wrap xs:overflow-x-hidden xs:overflow-y-scroll sm:container sm:mx-auto sm:max-h-screen sm:flex sm:flex-wrap">
-      <Filter />
+      <Filter
+        sortType={itemsSort}
+        sortPrice={(asc: boolean) => sortPrice(asc)}
+      />
       <div
         id="scrollableDiv"
         style={{
