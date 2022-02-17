@@ -110,11 +110,11 @@ const FILTER_INDICATOR = styled.div<StyledProps>`
     ${'@media (max-width: 499px)'} {animation: ${(StyledProps) =>
   StyledProps.show == 1
     ? css`
-        ${SideTransition('50vw')} 0.5s linear forwards
+        ${SideTransition('40vw')} 0.5s linear forwards
       `
     : StyledProps.show == 0
     ? css`
-        ${SideTransitionBack('50vw')} 0.5s linear forwards
+        ${SideTransitionBack('40vw')} 0.5s linear forwards
       `
     : 'none'}};
   }
@@ -196,9 +196,30 @@ export default function Filter() {
             <div>
               <label>Platforms:</label>
               <button>All</button>
-              <button>Decentraland</button>
-              <button>The Sandbox</button>
-              <button>Somnium Space</button>
+              <PlatformButton
+                url={
+                  'https://lh3.googleusercontent.com/5KIxEGmnAiL5psnMCSLPlfSxDxfRSk4sTQRSyhPdgnu70nGb2YsuVxTmO2iKEkOZOfq476Bl1hAu6aJIKjs1myY=s130'
+                }
+                title="Decentraland"
+              />
+              <PlatformButton
+                url={
+                  'https://lh3.googleusercontent.com/SXH8tW1siikB80rwCRnjm1a5xM_MwTg9Xl9Db6mioIk9HIlDM09pVoSR7GKJgS6ulSUpgW9BDtMk_ePX_NKgO9A=s130'
+                }
+                title="The Sandbox"
+              />
+              <PlatformButton
+                url={
+                  'https://lh3.googleusercontent.com/mzUNo5vk95qQfpAbXir0_6oJmZlyqnq_ix3BIjmfeVGrFPoxeAqf-vYHMvh115bSdJGxRtgGTWKldOzdJQGtEqGW=s130'
+                }
+                title="Somnium"
+              />
+              <PlatformButton
+                url={
+                  'https://lh3.googleusercontent.com/Jy6UrKMSi0e9w9jYtC1ON-4tOVXA1mXLk7XCLxvWEDuXeLFExJSYnw2DLAGtP3Ly98WJbrrFm6xEodcrpGnKB2tF=s130'
+                }
+                title="Cryptovoxels"
+              />
               <hr></hr>
               <label>Price:</label>
               <button>Low to High</button>
@@ -208,6 +229,39 @@ export default function Filter() {
         </div>
       </div>
     </FILTER_INDICATOR>
+  );
+}
+
+const PLATFORM_BUTTON = styled.div`
+  button {
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    align-items: center;
+    img {
+      padding: 0px 2px;
+      height: 100%;
+      border-radius: 100%;
+    }
+    label {
+      padding: 0;
+      padding-left: 5px;
+      text-align: left;
+      height: 100%;
+      width: 100%;
+      font-size: 1.05em;
+    }
+  }
+`;
+
+function PlatformButton(props: { title: string; url: string }) {
+  return (
+    <PLATFORM_BUTTON>
+      <button>
+        <img src={props.url} />
+        <label>{props.title}</label>
+      </button>
+    </PLATFORM_BUTTON>
   );
 }
 
