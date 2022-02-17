@@ -66,15 +66,21 @@ const textOpacityR = keyframes`
 
 const FILTER_INDICATOR = styled.div<StyledProps>`
   position: absolute;
-  top: 5px;
-  right: 5px;
+  ${'@media (min-width: 500px)'} {
+      top: 15px;
+    }
+  ${'@media (max-width: 500px)'} {
+      bottom: 65px;
+    }
+  right: 10px;
   .filter-container {
     position: relative;
     height: 0px;
     border-radius: 100%;
     z-index: 1;
     svg {
-      height: 50px;
+    ${'@media (min-width: 500px)'} {height : 50px;}
+      ${'@media (max-width: 500px)'} {height : 45px;}
       background-color: #ccc;
       border-radius: 100%;
       padding: 5px;
@@ -99,11 +105,11 @@ const FILTER_INDICATOR = styled.div<StyledProps>`
       ${'@media (min-width: 500px)'} {animation: ${(StyledProps) =>
   StyledProps.show == 1
     ? css`
-        ${SideTransition('160px')} 0.5s linear forwards
+        ${SideTransition('165px')} 0.5s linear forwards
       `
     : StyledProps.show == 0
     ? css`
-        ${SideTransitionBack('160px')} 0.5s linear forwards
+        ${SideTransitionBack('165px')} 0.5s linear forwards
       `
     : 'none'}};
 
@@ -249,7 +255,7 @@ const PLATFORM_BUTTON = styled.div`
       text-align: left;
       height: 100%;
       width: 100%;
-      font-size: 1.05em;
+      font-size: 1em;
     }
   }
 `;
