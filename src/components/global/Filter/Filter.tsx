@@ -73,18 +73,19 @@ const FILTER_INDICATOR = styled.div<StyledProps>`
       top: 15px;
     }
   ${'@media (max-width: 500px)'} {
-      bottom: 65px;
+      bottom: 20px;
     }
   right: 10px;
   .filter-container {
     position: relative;
-    height: 0px;
-    border-radius: 100%;
+    height: auto;
     z-index: 1;
+    padding: 10px;
     svg {
     ${'@media (min-width: 500px)'} {height : 50px;}
       ${'@media (max-width: 500px)'} {height : 45px;}
       background-color: #ccc;
+      
       border-radius: 100%;
       padding: 5px;
       color: white;
@@ -188,7 +189,10 @@ const FILTER_CONTAINER = styled.div<StyledProps>`
   }
 `;
 
-export default function Filter() {
+export default function Filter(props: {
+  sortPrice: (e: boolean) => void;
+  sortType: boolean;
+}) {
   const [showFilterModal, setShowFilterModal] = useState(9);
   return (
     <FILTER_INDICATOR show={showFilterModal}>
@@ -231,8 +235,36 @@ export default function Filter() {
               />
               <hr></hr>
               <label>Price:</label>
-              <button>Low to High</button>
-              <button>High to Low</button>
+              <button
+                style={{
+                  backgroundColor: `${
+                    props.sortType == true ? 'purple' : '#212121'
+                  }`,
+                  boxShadow: `${
+                    props.sortType == true
+                      ? '0px 0px 0px 0px #ccc'
+                      : '0px 0px 6px 1px #b53ebd'
+                  }`,
+                }}
+                onClick={() => props.sortPrice(true)}
+              >
+                Low to High
+              </button>
+              <button
+                style={{
+                  backgroundColor: `${
+                    props.sortType == false ? 'purple' : '#212121'
+                  }`,
+                  boxShadow: `${
+                    props.sortType == false
+                      ? '0px 0px 0px 0px #ccc'
+                      : '0px 0px 6px 1px #b53ebd'
+                  }`,
+                }}
+                onClick={() => props.sortPrice(false)}
+              >
+                High to Low
+              </button>
             </div>
             <div
               style={{
