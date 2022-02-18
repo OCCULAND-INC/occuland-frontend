@@ -1,7 +1,7 @@
-import LandmarketContainer from '~/components/pages/Landmarket/LandmarketContainer';
+import SettingsContainer from '~/components/pages/Settings/SettingsContainer';
 
 function Landmarket() {
-  return <LandmarketContainer />;
+  return <SettingsContainer />;
 }
 
 export default Landmarket;

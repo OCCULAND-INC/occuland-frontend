@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
 
 import Filter from '~/components/global/Filter/Filter';
+import Loading from '~/components/global/Loading/Loading';
 
 import { LOADING_STATE } from '../loading.types';
 import LandCard from './LandCard';
@@ -105,7 +106,7 @@ function LandsaleContainer() {
         setItems((prevItem: any) => [...prevItem, ...result[0]]);
         setItemCounts(result[1]);
         //setPageCount(Math.ceil(result[1] / 9));
-        setLoading(LOADING_STATE.OFF);
+        setTimeout(() => setLoading(LOADING_STATE.OFF), 2000);
       })
       .catch(() => {
         setLoading(LOADING_STATE.ERROR);
@@ -149,7 +150,7 @@ function LandsaleContainer() {
       });
   }
   if (loading == 'INIT') {
-    return <div>loading . . .</div>;
+    return <Loading />;
   }
   return (
     <div className="xs:max-h-screen xs:flex xs:flex-wrap xs:overflow-x-hidden xs:overflow-y-scroll sm:container sm:mx-auto sm:max-h-screen sm:flex sm:flex-wrap">

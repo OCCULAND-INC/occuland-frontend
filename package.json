@@ -27,6 +27,7 @@
     "@web3-react/injected-connector": "^6.0.7",
     "@web3-react/network-connector": "^6.1.9",
     "@web3-react/walletconnect-connector": "^6.2.8",
+    "@zoralabs/zdk": "^1.2.6",
     "ethers": "^5.5.3",
     "immer": "^9.0.12",
     "moralis": "^1.2.3",
