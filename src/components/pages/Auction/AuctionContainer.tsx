@@ -1,3 +1,4 @@
+import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Web3Provider } from '@ethersproject/providers';
 import { useWeb3React } from '@web3-react/core';
@@ -6,9 +7,19 @@ import { ethers, Wallet } from 'ethers';
 import { useEffect, useState } from 'react';
 
 import { Platforms } from '~/assets/platforms/Plaforms';
+import Loading from '~/components/global/Loading/Loading';
+import LoadingSm from '~/components/global/Loading/LoadingSm';
 import approveAbi from '~/contracts/Approve.json';
 
 import ConnectWallet from '../Bridge/ConnectWallet/ConnectWallet';
+import { LOADING_STATE } from '../loading.types';
+
+enum USER_LOCATION {
+  ASSETS = 'ASSETS',
+  AUCTION = 'AUCTION',
+  BIDDING = 'BIDDING',
+  RENTING = 'RENTING',
+}
 
 //import { LOADING_STATE } from '../loading.types';
 
@@ -50,10 +61,11 @@ import ConnectWallet from '../Bridge/ConnectWallet/ConnectWallet';
 ];*/
 
 const PROFILE_HEADER = styled.div`
-  background-color: transparent;
+  background-color: white;
   padding: 20px;
+  width: 100%;
   .header-content {
-    width: calc(100% - 60px);
+    width: calc(100% - 40px);
     left: 20px;
     z-index: 1;
     margin-right: 130px;
@@ -82,12 +94,12 @@ const PROFILE_HEADER = styled.div`
 `;
 
 interface PROFILE_TAB_PROPS {
+  active: boolean;
   indicator: number;
 }
 const PROFILE_TAB = styled.li<PROFILE_TAB_PROPS>`
   border: solid 0.5px #ccc;
   border-top: none;
-  border-bottom: solid 2px transparent;
   :hover {
     cursor: pointer;
     border-bottom: solid 2px purple;
@@ -123,6 +135,43 @@ const PROFILE_TAB = styled.li<PROFILE_TAB_PROPS>`
     opacity: ${(PROFILE_TAB_PROPS: { indicator: number }) =>
       PROFILE_TAB_PROPS.indicator > 0 ? '1' : '0'};
   }
+
+  ${(StyledProps) =>
+    StyledProps.active == true
+      ? css`
+          border-bottom: solid 2px purple;
+          label {
+            color: purple;
+          }
+          span {
+            background-color: purple;
+            color: white;
+          }
+        `
+      : css`
+          border-bottom: solid 2px transparent;
+        `};
+`;
+
+const PROFILE_CONTENT_CONTAINER = styled.div`
+  margin: 30px 0px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  box-sizing: border-box;
+`;
+const PROFILE_CONTENT_MAIN = styled.div`
+  padding-left: 50px;
+  padding-right: 50px;
+  height: 100%;
+  width: 90%;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  overflow: scroll;
+  padding-bottom: 100px;
 `;
 
 interface MoralisNFT {
@@ -149,6 +198,7 @@ const getAllAssetsFromOwner = async (
   chain: string,
   //setLoading?: (e: LOADING_STATE) => void,
   setAssets: (e: MoralisNFT[]) => void,
+  setLoading: (e: LOADING_STATE) => void,
 ) => {
   fetch(
     `https://deep-index.moralis.io/api/v2/${wallet_address}/nft/${contract_address}?chain=${chain}&format=decimal`,
@@ -168,36 +218,35 @@ const getAllAssetsFromOwner = async (
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         //@ts-ignore
         setAssets((prev: MoralisNFT[]) => [...prev, ...out]);
+        setTimeout(() => setLoading(LOADING_STATE.OFF), 3000);
       }
     })
     .catch((err) => {
       console.error(err);
+      setLoading(LOADING_STATE.ERROR);
     });
 };
 
 export default function AuctionContainer() {
   //const { connector } = useWeb3React<Web3Provider>();
   const context = useWeb3React<Web3Provider>();
+  const [loading, setLoading] = useState<LOADING_STATE>(LOADING_STATE.INIT);
   const [signer, setSigner] = useState<any>();
   const [signerAddress, setSignerAddress] = useState('');
   const [auctionHouse, setAuctionHouse] = useState<any>(undefined);
   const [zora, setZora] = useState<any>(undefined);
   const [assets, setAssets] = useState<MoralisNFT[]>([]);
+  const [location, setLocation] = useState<USER_LOCATION>(USER_LOCATION.ASSETS);
 
   useEffect(() => {
     if (context.library && context.account) {
+      setLoading(LOADING_STATE.INIT);
       const pr = new ethers.providers.Web3Provider(context.library.provider);
       const _signer = pr.getSigner();
       setSigner(_signer);
       setSignerAddress(context.account);
     } else {
-      const url =
-        'https://mainnet.infura.io/v3/f9b2cc26f7f7441f9b542c104d032ae3';
-      const pr = new ethers.providers.JsonRpcProvider(url);
-      let wallet = Wallet.createRandom();
-      wallet = wallet.connect(pr);
-      setSigner(wallet);
-      setSignerAddress(wallet.address);
+      setTimeout(() => setLoading(LOADING_STATE.OFF), 3000);
     }
   }, [context.account]);
 
@@ -217,6 +266,7 @@ export default function AuctionContainer() {
         '0x05EE40Ee0A0579EaF609cA456a76e32567E263B8',
         '0x4',
         setAssets,
+        setLoading,
       );
       //setAssets((prev) => [...prev, ...data]);
     }
@@ -259,79 +309,83 @@ export default function AuctionContainer() {
     console.log(auction);
   };
 
-  if (zora == undefined) {
-    return <div>loading . . . </div>;
-  }
-
   return (
     <div
       style={{
         height: '100vh',
         position: 'relative',
         boxSizing: 'border-box',
+        backgroundColor: 'white',
       }}
     >
       <PROFILE_HEADER>
         <div className="header-content">
           <ul>
-            <PROFILE_TAB indicator={0}>
+            <PROFILE_TAB
+              indicator={assets.length}
+              active={location == USER_LOCATION.ASSETS ? true : false}
+              onClick={() => setLocation(USER_LOCATION.ASSETS)}
+            >
               <label>Assets</label>
-              <span>0</span>
+              <span>{assets.length}</span>
             </PROFILE_TAB>
-            <PROFILE_TAB indicator={1}>
+            <PROFILE_TAB
+              indicator={0}
+              active={location == USER_LOCATION.AUCTION ? true : false}
+              onClick={() => setLocation(USER_LOCATION.AUCTION)}
+            >
               <label>Auction</label>
               <span>5</span>
             </PROFILE_TAB>
-            <PROFILE_TAB indicator={4}>
+            <PROFILE_TAB
+              indicator={0}
+              active={location == USER_LOCATION.BIDDING ? true : false}
+              onClick={() => setLocation(USER_LOCATION.BIDDING)}
+            >
               <label>Bidding</label>
               <span>199</span>
             </PROFILE_TAB>
-            <PROFILE_TAB indicator={0}>
+            <PROFILE_TAB
+              indicator={0}
+              active={location == USER_LOCATION.RENTING ? true : false}
+              onClick={() => setLocation(USER_LOCATION.RENTING)}
+            >
               <label>Renting</label>
               <span>1</span>
             </PROFILE_TAB>
           </ul>
         </div>
       </PROFILE_HEADER>
-      {context.account ? (
-        <div
-          style={{
-            padding: '0px 15px',
-            paddingTop: '35px',
-            display: 'flex',
-            flexDirection: 'row',
-            flexWrap: 'wrap',
-            height: '100%',
-            justifyContent: 'center',
-            overflow: 'scroll',
-            paddingBottom: '100px',
-          }}
-        >
-          {assets.length > 0 ? (
-            assets.map((item: MoralisNFT, index: number) => (
-              <MoralisNFTCard
-                key={index}
-                item={item}
-                onClick={(e: string, f: string) => auctionIt(e, f)}
-              ></MoralisNFTCard>
-            ))
-          ) : (
-            <div>Where your NFTs go?</div>
-          )}
-        </div>
-      ) : (
-        <div
-          style={{
-            width: '100%',
-            height: '100%',
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-          }}
-        >
-          <ConnectWallet onClick={() => {}} />
-        </div>
-      )}
+      <PROFILE_CONTENT_CONTAINER>
+        {context.account ? (
+          <PROFILE_CONTENT_MAIN>
+            {assets.length > 0 ? (
+              assets.map((item: MoralisNFT, index: number) => (
+                <MoralisNFTCard
+                  key={index}
+                  item={item}
+                  onClick={(e: string, f: string) => auctionIt(e, f)}
+                ></MoralisNFTCard>
+              ))
+            ) : (
+              <div>Where your NFTs go?</div>
+            )}
+          </PROFILE_CONTENT_MAIN>
+        ) : (
+          <div
+            style={{
+              width: '100%',
+              height: '100%',
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}
+          >
+            <ConnectWallet onClick={() => {}} />
+          </div>
+        )}
+        {loading == LOADING_STATE.INIT ? <LoadingSm /> : null}
+      </PROFILE_CONTENT_CONTAINER>
     </div>
   );
 }
