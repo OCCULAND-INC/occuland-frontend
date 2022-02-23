@@ -39,7 +39,7 @@ function ConnectWallet({ onClick }: Props) {
       try {
         await window.ethereum.request({
           method: 'wallet_switchEthereumChain',
-          params: [{ chainId: '0x3' }],
+          params: [{ chainId: '0x4' }],
         });
         setActivatingConnector(currentConnector);
         activate(CONNECTORS_WITH_INFO[name].connector);
