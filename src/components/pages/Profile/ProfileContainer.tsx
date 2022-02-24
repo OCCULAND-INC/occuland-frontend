@@ -1,9 +1,9 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable sort-keys */
 /* eslint-disable no-console */
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Web3Provider } from '@ethersproject/providers';
-import { createClient } from '@supabase/supabase-js';
 import { useWeb3React } from '@web3-react/core';
 import { AuctionHouse, Zora } from '@zoralabs/zdk';
 import { ethers } from 'ethers';
@@ -16,10 +16,10 @@ import { LOADING_STATE } from '../loading.types';
 import AssetsContainer from './Assets/AssetsContainer';
 import AuctionsContainer from './Auctions/AuctionsContainer';
 
-const supabase = createClient(
+/*const supabase = createClient(
   'https://gjlbvpaiezrovocjokmk.supabase.co',
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdqbGJ2cGFpZXpyb3ZvY2pva21rIiwicm9sZSI6ImFub24iLCJpYXQiOjE2NDQzMzM4NTUsImV4cCI6MTk1OTkwOTg1NX0.Er7P__CL1qse_GnYZu7nl9nV2OSsPFVVv7nGo7AYNbw',
-);
+);*/
 
 enum USER_LOCATION {
   ASSETS = 'ASSETS',
@@ -49,23 +49,6 @@ interface MoralisNFT {
   token_id: string;
   token_uri: string;
 }
-interface itemsOnAuction {
-  auction_approved: string;
-  auction_currency: string;
-  auction_id: string;
-  auction_status: string;
-  curator_fee_perc: string;
-  duration: string;
-  first_bid_time: string;
-  last_bid_amount: string;
-  last_bidder: string;
-  reserve_price: string;
-  token_address: string;
-  token_id: string;
-  token_owner: string;
-  txn_hash: string;
-}
-
 interface DataAuction {
   data: Auction;
 }
@@ -236,7 +219,7 @@ const getAllAuctionsByOwner = async (
     });
 };
 
-const storeAuctionInDb = async (
+/*const storeAuctionInDb = async (
   address: string,
   contractAddress: string,
   tokenId: string,
@@ -284,7 +267,7 @@ const confirmCanceledAuction = async (txn_hash: string) => {
   });
   console.log(data);
   console.log(error);
-};
+};*/
 export default function ProfileContainer() {
   //const { connector } = useWeb3React<Web3Provider>();
   const context = useWeb3React<Web3Provider>();

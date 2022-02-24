@@ -10,23 +10,6 @@ interface AuctionsContainer {
   assets: itemsOnAuctionV2[];
   cancelAuction: (e: string) => void;
 }
-
-interface itemsOnAuction {
-  auction_approved: boolean;
-  auction_currency: string;
-  auction_id: string;
-  auction_status: string;
-  curator_fee_perc: string;
-  duration: string;
-  first_bid_time: string;
-  last_bid_amount: string;
-  last_bidder: string;
-  reserve_price: string;
-  token_address: string;
-  token_id: string;
-  token_owner: string;
-  txn_hash: string;
-}
 interface itemsOnAuctionV2 {
   approved: string;
   auctionCurrency: string;
