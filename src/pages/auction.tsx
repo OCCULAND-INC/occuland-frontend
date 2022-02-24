@@ -1,7 +1,7 @@
-import AuctionContainer from '~/components/pages/Auction/AuctionContainer';
+import SettingsContainer from '~/components/pages/Settings/SettingsContainer';
 
 function Experience() {
-  return <AuctionContainer />;
+  return <SettingsContainer />;
 }
 
 export default Experience;

@@ -30,8 +30,8 @@ export const ROUTES_MAP = [
     icon: <PuzzleIcon className="h-5 w-5 mr-2" style={{ color: '#9d5feb' }} />,
   },
   {
-    href: '/settings',
-    title: 'Settings',
+    href: '/profile',
+    title: 'Profile',
     icon: <CogIcon className="h-5 w-5 mr-2" style={{ color: '#9d5feb' }} />,
   },
 ];
