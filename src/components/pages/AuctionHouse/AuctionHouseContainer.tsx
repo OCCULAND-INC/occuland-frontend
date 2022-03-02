@@ -6,15 +6,14 @@ import styled from '@emotion/styled';
 import { Web3Provider } from '@ethersproject/providers';
 import { useWeb3React } from '@web3-react/core';
 import { AuctionHouse, Zora } from '@zoralabs/zdk';
-import { ethers } from 'ethers';
+import { ethers, Wallet } from 'ethers';
 import { useEffect, useState } from 'react';
 
 import LoadingSm from '~/components/global/Loading/LoadingSm';
 import approveAbi from '~/contracts/Approve.json';
 
 import { LOADING_STATE } from '../loading.types';
-import AssetsContainer from './Assets/AssetsContainer';
-import AuctionsContainer from './Auctions/AuctionsContainer';
+import AuctionsElements from './AuctionsElement';
 
 /*const supabase = createClient(
   'https://gjlbvpaiezrovocjokmk.supabase.co',
@@ -208,7 +207,7 @@ const getAllAuctionsByOwner = async (
     headers: {
       'Content-Type': 'application/json',
     },
-    body: `{"query":"{\\n  Auction(\\n    where: {curator: {_ilike: \\"0x4e9becbfe8170e94b06db6041a1937eee28534e7\\"}, \\ntokenOwner: {_ilike: \\"${token_owner}\\"},\\nstatus: { _neq: \\"CANCELED\\"},\\n\\t\\t\\ttokenContract: {_in: [\\"0x05EE40Ee0A0579EaF609cA456a76e32567E263B8\\"]}\\n\\t}\\n\\n  ) {\\n\\t\\t\\tauctionId\\n\\t\\t\\ttokenId\\n\\t\\t\\ttokenContract\\n\\t\\t\\ttokenOwner\\n\\t\\t\\tapproved\\n\\t\\t\\tduration\\n\\t\\t\\tfirstBidTime\\n\\t\\t\\treservePrice\\n\\t\\t\\tcuratorFeePercentage\\n\\t\\t\\tauctionCurrency\\n\\t\\t\\tlastBidder\\n\\t\\t\\tlastBidAmount\\n\\t\\t\\tauction_status: status\\n  }\\n}\\n "}`,
+    body: '{"query":"{\\n  Auction(\\n    where: {curator: {_ilike: \\"0x4e9becbfe8170e94b06db6041a1937eee28534e7\\"}, \\nstatus: { _in: [\\"APPROVED\\", \\"IN_PROGRESS\\"]},\\n\\t\\t\\ttokenContract: {_in: [\\"0x05EE40Ee0A0579EaF609cA456a76e32567E263B8\\"]}\\n\\t}\\n\\n  ) {\\n\\t\\t\\tauctionId\\n\\t\\t\\ttokenId\\n\\t\\t\\ttokenContract\\n\\t\\t\\ttokenOwner\\n\\t\\t\\tapproved\\n\\t\\t\\tduration\\n\\t\\t\\tfirstBidTime\\n\\t\\t\\treservePrice\\n\\t\\t\\tcuratorFeePercentage\\n\\t\\t\\tauctionCurrency\\n\\t\\t\\tlastBidder\\n\\t\\t\\tlastBidAmount\\n\\t\\t\\tauction_status: status\\n  }\\n}\\n "}',
   })
     .then(async (response) => {
       const output = await response.json();
@@ -279,6 +278,7 @@ export default function ProfileContainer() {
   const [assets, setAssets] = useState<MoralisNFT[]>([]);
   const [location, setLocation] = useState<USER_LOCATION>(USER_LOCATION.ASSETS);
   const [itemsOnAuction, setItemsOnAuction] = useState<itemsOnAuctionV2[]>([]);
+  const [acc, setAcc] = useState<string>();
 
   useEffect(() => {
     if (context.library && context.account) {
@@ -291,6 +291,11 @@ export default function ProfileContainer() {
         setItemsOnAuction(x.data.Auction);
       });
     } else {
+      //const wallet = Wallet.createRandom();
+      setAcc(Wallet.createRandom()['address']);
+      getAllAuctionsByOwner(acc, (x: DataAuction) => {
+        setItemsOnAuction(x.data.Auction);
+      });
       setTimeout(() => setLoading(LOADING_STATE.OFF), 3000);
     }
   }, [context.account]);
@@ -365,10 +370,11 @@ export default function ProfileContainer() {
     }
   };
 
-  const cancelAuction = async (_auction_id: string) => {
+  const makeBids = async (_auction_id: string, _amount: string) => {
     try {
       setLoading(LOADING_STATE.INIT);
-      await auctionHouse.cancelAuction(_auction_id);
+      const res = await auctionHouse.createBid(_auction_id, '9000');
+      console.log(res);
       refreshData();
     } catch (e) {
       setLoading(LOADING_STATE.OFF);
@@ -421,27 +427,6 @@ export default function ProfileContainer() {
   }
   */
 
-  function RouteSwitch(loc: USER_LOCATION) {
-    switch (loc) {
-      case USER_LOCATION.ASSETS:
-        return (
-          <AssetsContainer
-            account={context.account || ''}
-            assets={assets}
-            auctionIt={auctionIt}
-          />
-        );
-      case USER_LOCATION.AUCTION:
-        return (
-          <AuctionsContainer
-            account={context.account || ''}
-            assets={itemsOnAuction}
-            cancelAuction={cancelAuction}
-          />
-        );
-    }
-  }
-
   return (
     <div
       style={{
@@ -452,45 +437,11 @@ export default function ProfileContainer() {
         display: 'flex',
       }}
     >
-      <PROFILE_HEADER>
-        <div className="header-content">
-          <ul>
-            <PROFILE_TAB
-              indicator={assets.length}
-              active={location == USER_LOCATION.ASSETS ? true : false}
-              onClick={() => setLocation(USER_LOCATION.ASSETS)}
-            >
-              <label>Assets</label>
-              <span>{assets.length}</span>
-            </PROFILE_TAB>
-            <PROFILE_TAB
-              indicator={itemsOnAuction.length}
-              active={location == USER_LOCATION.AUCTION ? true : false}
-              onClick={() => setLocation(USER_LOCATION.AUCTION)}
-            >
-              <label>Auctions</label>
-              <span>{itemsOnAuction.length}</span>
-            </PROFILE_TAB>
-            <PROFILE_TAB
-              indicator={0}
-              active={location == USER_LOCATION.BIDDING ? true : false}
-              onClick={() => setLocation(USER_LOCATION.BIDDING)}
-            >
-              <label>Bidding</label>
-              <span>199</span>
-            </PROFILE_TAB>
-            <PROFILE_TAB
-              indicator={0}
-              active={location == USER_LOCATION.RENTING ? true : false}
-              onClick={() => setLocation(USER_LOCATION.RENTING)}
-            >
-              <label>Renting</label>
-              <span>1</span>
-            </PROFILE_TAB>
-          </ul>
-        </div>
-      </PROFILE_HEADER>
-      {RouteSwitch(location)}
+      <AuctionsElements
+        account={context.account || acc}
+        assets={itemsOnAuction}
+        makeBid={makeBids}
+      />
       {loading == LOADING_STATE.INIT ? <LoadingSm /> : null}
     </div>
   );
