@@ -56,14 +56,17 @@ const SideTransitionBack = (size: string) => keyframes`
 const textOpacity = keyframes`
 0% {
     opacity: 0.0;
+    
 }
 100% {
     opacity: 1.0;
+    
 }
 `;
 const textOpacityR = keyframes`
 0% {
     opacity: 0.0;
+    
 }
 `;
 
@@ -136,6 +139,7 @@ const FILTER_CONTAINER = styled.div<StyledProps>`
   flex-direction: column;
   flex-wrap: none;
   opacity: 0;
+  display: ${(StyledProps) => (StyledProps.show == 1 ? 'block' : 'none')};
   animation: ${(StyledProps) =>
     StyledProps.show == 1
       ? css`

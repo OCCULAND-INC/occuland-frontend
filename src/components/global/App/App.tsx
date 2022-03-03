@@ -59,6 +59,9 @@ const SIDER_CONTAINER = styled.div<SIDER_SHOW>`
 
 function App({ children }: Props) {
   const [showSider, setShowSider] = useState<boolean>(false);
+  function sliderToggle() {
+    setShowSider(showSider ? false : true);
+  }
   return (
     <Provider store={store}>
       <Web3ReactProvider getLibrary={getLibrary}>
@@ -82,12 +85,12 @@ function App({ children }: Props) {
                 {showSider ? (
                   <ArrowCircleLeftIcon
                     className="icon"
-                    onClick={() => setShowSider(showSider ? false : true)}
+                    onClick={sliderToggle}
                   />
                 ) : (
                   <ArrowCircleRightIcon
                     className="icon"
-                    onClick={() => setShowSider(showSider ? false : true)}
+                    onClick={sliderToggle}
                   />
                 )}
               </HEADER_CONTAINER>
