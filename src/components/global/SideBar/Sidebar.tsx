@@ -2,6 +2,7 @@ import Image from 'next/image';
 import { useRouter } from 'next/router';
 
 import Logo from '~/assets/logo/logo.svg';
+import ConnectWallet from '~/components/pages/Bridge/ConnectWallet/ConnectWallet';
 
 import { ROUTES_MAP } from './Sidebar.utils';
 
@@ -20,9 +21,9 @@ function Sidebar() {
     <nav
       className=" xs:hidden sm:flex sm:flex-col sm:flex-shrink-0 sm:h-screen sm:items-center sm:py-10 sm:px-5 sm:rounded-tr-4xl sm:rounded-br-4xl sm:shadow-2xl sm:drop-shadow-2xl"
       style={{
-        fontFamily: 'roboto',
         fontWeight: '500',
         backgroundColor: '#141414',
+        maxWidth: '180px',
       }}
     >
       <div className="mb-8 cursor-pointer">
@@ -40,6 +41,7 @@ function Sidebar() {
           </li>
         ))}
       </ul>
+      <ConnectWallet onClick={() => {}} />
     </nav>
   );
 }
