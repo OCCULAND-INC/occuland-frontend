@@ -172,7 +172,8 @@ const EXP_ELEMENT = styled.div`
   flex-direction: column;
   justify-content: center;
   border: solid 0.5px #141414;
-  max-width: 48%;
+  max-width: calc(min(600px, 48%));
+  max-height: 500px;
   ${'@media (max-width: 1100px)'} {
     max-width: 100%;
   }

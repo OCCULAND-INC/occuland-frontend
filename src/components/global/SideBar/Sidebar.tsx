@@ -19,10 +19,8 @@ function Sidebar() {
 
   return (
     <nav
-      className=" xs:hidden sm:flex sm:flex-col sm:flex-shrink-0 sm:h-screen sm:items-center sm:py-10 sm:px-5 sm:rounded-tr-4xl sm:rounded-br-4xl sm:shadow-2xl sm:drop-shadow-2xl"
       style={{
         fontWeight: '500',
-        backgroundColor: '#141414',
         maxWidth: '180px',
       }}
     >

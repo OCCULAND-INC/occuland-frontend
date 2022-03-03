@@ -1,5 +1,10 @@
+import styled from '@emotion/styled';
+import {
+  ArrowCircleLeftIcon,
+  ArrowCircleRightIcon,
+} from '@heroicons/react/solid';
 import { Web3ReactProvider } from '@web3-react/core';
-import { ReactNode } from 'react';
+import { ReactNode, useState } from 'react';
 import { Provider, useDispatch, useSelector } from 'react-redux';
 
 import Alert from '~/components/global/Alert/Alert';
@@ -15,13 +20,54 @@ interface Props {
   children: ReactNode;
 }
 
+const HEADER_CONTAINER = styled.div`
+  border-bottom-right-radius: 50%;
+  z-index: 10;
+  position: absolute;
+  top: 0px;
+  background-color: #ccc;
+  height: 60px;
+  width: 60px;
+  &:hover {
+    cursor: pointer;
+  }
+  .icon {
+    color: purple;
+  }
+  ${'@media (min-width: 601px)'} {
+    display: none;
+  }
+`;
+interface SIDER_SHOW {
+  show: boolean;
+}
+const SIDER_CONTAINER = styled.div<SIDER_SHOW>`
+  overflow: hidden;
+  padding: 0;
+  margin: 0;
+  height: 100vh;
+  fontweight: 500;
+  background-color: #141414;
+  maxwidth: 180px;
+  padding: 20px;
+  ${'@media (max-width: 601px)'} {
+    display: ${(SIDER_SHOW: { show: boolean }) =>
+      SIDER_SHOW.show ? 'flex' : 'none'};
+    width: 300px;
+  }
+`;
+
 function App({ children }: Props) {
+  const [showSider, setShowSider] = useState<boolean>(false);
   return (
     <Provider store={store}>
       <Web3ReactProvider getLibrary={getLibrary}>
         <Web3Manager>
           <div className="flex">
-            <Sidebar />
+            <SIDER_CONTAINER show={showSider}>
+              <Sidebar />
+            </SIDER_CONTAINER>
+
             <div
               style={{
                 display: 'flex',
@@ -32,7 +78,19 @@ function App({ children }: Props) {
                 width: '100%',
               }}
             >
-              {/*<Header />*/}
+              <HEADER_CONTAINER>
+                {showSider ? (
+                  <ArrowCircleLeftIcon
+                    className="icon"
+                    onClick={() => setShowSider(showSider ? false : true)}
+                  />
+                ) : (
+                  <ArrowCircleRightIcon
+                    className="icon"
+                    onClick={() => setShowSider(showSider ? false : true)}
+                  />
+                )}
+              </HEADER_CONTAINER>
               <Layout>{children}</Layout>
               <div
                 style={{
