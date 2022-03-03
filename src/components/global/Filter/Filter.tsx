@@ -79,7 +79,7 @@ const FILTER_INDICATOR = styled.div<StyledProps>`
   .filter-container {
     position: relative;
     height: auto;
-    z-index: 1;
+    z-index: 10;
     padding: 10px;
     svg {
     ${'@media (min-width: 500px)'} {height : 50px;}
