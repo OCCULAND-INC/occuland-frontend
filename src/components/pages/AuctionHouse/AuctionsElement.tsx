@@ -8,7 +8,7 @@ import ConnectWallet from '../Bridge/ConnectWallet/ConnectWallet';
 interface AuctionsContainer {
   account?: string;
   assets: itemsOnAuctionV2[];
-  makeBid: (e: string) => void;
+  makeBid: (e: string, f: string) => void;
 }
 interface itemsOnAuctionV2 {
   approved: string;
@@ -179,7 +179,7 @@ export default function AuctionsContainer(props: AuctionsContainer) {
               <MoralisNFTCard
                 key={index}
                 item={item}
-                onClick={(e: string) => props.makeBid(e)}
+                onClick={(e: string) => props.makeBid(e, '')}
               ></MoralisNFTCard>
             ))
           ) : (

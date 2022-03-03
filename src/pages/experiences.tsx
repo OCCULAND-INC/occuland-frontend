@@ -1,7 +1,7 @@
-import SettingsContainer from '~/components/pages/Settings/SettingsContainer';
+import ExperiencesContainer from '~/components/pages/Experiences/ExperiencesContainer';
 
 function Experience() {
-  return <SettingsContainer />;
+  return <ExperiencesContainer />;
 }
 
 export default Experience;

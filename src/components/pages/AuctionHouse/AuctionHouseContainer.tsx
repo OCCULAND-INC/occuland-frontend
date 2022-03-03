@@ -1,8 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable sort-keys */
 /* eslint-disable no-console */
-import { css } from '@emotion/react';
-import styled from '@emotion/styled';
 import { Web3Provider } from '@ethersproject/providers';
 import { useWeb3React } from '@web3-react/core';
 import { AuctionHouse, Zora } from '@zoralabs/zdk';
@@ -10,7 +8,6 @@ import { ethers, Wallet } from 'ethers';
 import { useEffect, useState } from 'react';
 
 import LoadingSm from '~/components/global/Loading/LoadingSm';
-import approveAbi from '~/contracts/Approve.json';
 
 import { LOADING_STATE } from '../loading.types';
 import AuctionsElements from './AuctionsElement';
@@ -19,17 +16,6 @@ import AuctionsElements from './AuctionsElement';
   'https://gjlbvpaiezrovocjokmk.supabase.co',
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdqbGJ2cGFpZXpyb3ZvY2pva21rIiwicm9sZSI6ImFub24iLCJpYXQiOjE2NDQzMzM4NTUsImV4cCI6MTk1OTkwOTg1NX0.Er7P__CL1qse_GnYZu7nl9nV2OSsPFVVv7nGo7AYNbw',
 );*/
-
-enum USER_LOCATION {
-  ASSETS = 'ASSETS',
-  AUCTION = 'AUCTION',
-  BIDDING = 'BIDDING',
-  RENTING = 'RENTING',
-}
-interface PROFILE_TAB_PROPS {
-  active: boolean;
-  indicator: number;
-}
 
 interface MoralisNFT {
   amount: string;
@@ -71,94 +57,6 @@ interface itemsOnAuctionV2 {
   tokenId: string;
   tokenOwner: string;
 }
-const PROFILE_HEADER = styled.div`
-  background-color: white;
-  padding: 20px;
-  width: 0px;
-  .header-content {
-    width: calc(100% - 40px);
-    left: 20px;
-    z-index: 1;
-    margin-right: 130px;
-    position: absolute;
-    border-bottom: solid 2px #ccc;
-    box-sizing: border-box;
-    background-color: #efefef;
-    border-radius: 10px;
-    box-shadow: 0px 0px 5px 1px #ccc;
-    ul {
-      display: flex;
-      flex-direction: row;
-      padding-top: 0px;
-
-      li {
-        :first-child {
-          border-left: none;
-          border-bottom-left-radius: 10px;
-        }
-        :last-child {
-          border-right: none;
-        }
-      }
-    }
-  }
-`;
-const PROFILE_TAB = styled.li<PROFILE_TAB_PROPS>`
-  border: solid 0.5px #ccc;
-  border-top: none;
-  :hover {
-    cursor: pointer;
-    border-bottom: solid 2px purple;
-    label {
-      cursor: pointer;
-      color: purple;
-    }
-    span {
-      background-color: purple;
-      color: white;
-    }
-  }
-  height: 50px;
-  width: 150px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-
-  label {
-    font-weight: 600;
-  }
-  span {
-    margin-left: 5px;
-    background-color: #ccc;
-    height: 20px;
-    width: 30px;
-    border-radius: 40%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 10px;
-    font-weight: 700;
-    opacity: ${(PROFILE_TAB_PROPS: { indicator: number }) =>
-      PROFILE_TAB_PROPS.indicator > 0 ? '1' : '0'};
-  }
-
-  ${(StyledProps) =>
-    StyledProps.active == true
-      ? css`
-          border-bottom: solid 2px purple;
-          label {
-            color: purple;
-          }
-          span {
-            background-color: purple;
-            color: white;
-          }
-        `
-      : css`
-          border-bottom: solid 2px transparent;
-        `};
-`;
-
 const getAllAssetsFromOwner = async (
   wallet_address: string,
   contract_address: string,
@@ -276,7 +174,7 @@ export default function ProfileContainer() {
   const [auctionHouse, setAuctionHouse] = useState<any>(undefined);
   const [zora, setZora] = useState<any>(undefined);
   const [assets, setAssets] = useState<MoralisNFT[]>([]);
-  const [location, setLocation] = useState<USER_LOCATION>(USER_LOCATION.ASSETS);
+  //const [location, setLocation] = useState<USER_LOCATION>(USER_LOCATION.ASSETS);
   const [itemsOnAuction, setItemsOnAuction] = useState<itemsOnAuctionV2[]>([]);
   const [acc, setAcc] = useState<string>();
 
@@ -293,7 +191,7 @@ export default function ProfileContainer() {
     } else {
       //const wallet = Wallet.createRandom();
       setAcc(Wallet.createRandom()['address']);
-      getAllAuctionsByOwner(acc, (x: DataAuction) => {
+      getAllAuctionsByOwner('', (x: DataAuction) => {
         setItemsOnAuction(x.data.Auction);
       });
       setTimeout(() => setLoading(LOADING_STATE.OFF), 3000);
@@ -323,52 +221,6 @@ export default function ProfileContainer() {
       //setAssets((prev) => [...prev, ...data]);
     }
   }, [zora]);
-
-  const approveTxn = async (contractAddress: string, tokenId: string) => {
-    const contract = new ethers.Contract(
-      contractAddress,
-      approveAbi.abi,
-      signer,
-    );
-    return contract.approve(auctionHouse.auctionHouse.address, tokenId);
-  };
-
-  const auctionIt = async (contractAddress: string, tokenId: string) => {
-    setLoading(LOADING_STATE.INIT);
-    try {
-      const approvalTx = await approveTxn(contractAddress, tokenId);
-      console.log('about to  cleared');
-      await approvalTx.wait();
-      console.log('wait  cleared');
-      const createAuctionTx = await auctionHouse.createAuction(
-        tokenId,
-        '0',
-        '0',
-        '0x4e9becbfe8170e94b06db6041a1937eee28534e7',
-        '1',
-        '0x0000000000000000000000000000000000000000',
-        contractAddress,
-      );
-      console.log('about toreceipt');
-      const receipt = await createAuctionTx.wait();
-      console.log(receipt);
-      /*getAuctionId(receipt.transactionHash, async (res: string) => {
-      await storeAuctionInDb(
-        context.account ? context.account : '',
-        contractAddress,
-        tokenId,
-        receipt.transactionHash,
-        res,
-      );
-      console.log(res);
-      await refreshData();
-    });*/
-      await refreshData();
-    } catch (e) {
-      setLoading(LOADING_STATE.OFF);
-      console.log(e);
-    }
-  };
 
   const makeBids = async (_auction_id: string, _amount: string) => {
     try {

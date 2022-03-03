@@ -10,7 +10,6 @@ import { ethers } from 'ethers';
 import { useEffect, useState } from 'react';
 
 import LoadingSm from '~/components/global/Loading/LoadingSm';
-import approveAbi from '~/contracts/Approve.json';
 
 import { LOADING_STATE } from '../loading.types';
 
@@ -62,7 +61,6 @@ export default function AdminContainer() {
   const context = useWeb3React<Web3Provider>();
   const [loading, setLoading] = useState<LOADING_STATE>(LOADING_STATE.INIT);
   const [signer, setSigner] = useState<any>();
-  const [signerAddress, setSignerAddress] = useState('');
   const [auctionHouse, setAuctionHouse] = useState<any>(undefined);
   const [zora, setZora] = useState<any>(undefined);
   const [itemsOnAuction, setItemsOnAuction] = useState<itemsOnAuctionV2[]>([]);
@@ -73,7 +71,6 @@ export default function AdminContainer() {
       const pr = new ethers.providers.Web3Provider(context.library.provider);
       const _signer = pr.getSigner();
       setSigner(_signer);
-      setSignerAddress(context.account);
       getAllAuctionsByCurator(context.account, (x: DataAuction) => {
         console.log(x);
         setItemsOnAuction(x.data.Auction);
