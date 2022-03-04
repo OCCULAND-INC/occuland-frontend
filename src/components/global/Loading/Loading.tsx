@@ -5,6 +5,7 @@ import { ClipLoader } from 'react-spinners';
 import LogoText from '~/assets/logo/logo_text.png';
 
 const LOADING_CONTAINER = styled.div`
+  z-index: 100;
   ${'@media (min-width: 500px)'} {
     position: absolute;
     .logo {

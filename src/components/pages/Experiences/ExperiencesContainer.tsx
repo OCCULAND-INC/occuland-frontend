@@ -165,7 +165,7 @@ export default function ExperiencesContainer() {
 }
 
 const EXP_ELEMENT = styled.div`
-  background-color: #efefef;
+  background-color: white;
   border-radius: 10px;
   padding: 20px;
   box-shadow: 0px 0px 8px 1px #141414;
@@ -175,6 +175,9 @@ const EXP_ELEMENT = styled.div`
   border: solid 0.5px #141414;
   max-width: calc(min(600px, 48%));
   max-height: 500px;
+  border-radius: 70px;
+  border-top-right-radius: 25px;
+  border-bottom-left-radius: 25px;
   ${'@media (max-width: 601px)'} {
     width: 95%;
     max-height: 600px;
