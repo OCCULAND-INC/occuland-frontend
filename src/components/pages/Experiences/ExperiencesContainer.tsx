@@ -121,7 +121,16 @@ const EXP_CONTAINER = styled.div`
     height: 100%;
   }
 `;
-
+const CONTAINER = styled.div`
+  height: 100vh;
+  position: relative;
+  boxsizing: border-box;
+  backgroundcolor: white;
+  display: flex;
+  ${'@media (max-width: 601px)'} {
+    width: 100vw;
+  }
+`;
 const getItems = async (cb: (e: any) => void) => {
   const { data, error } = await supabase.from('experiences').select('*');
   console.log(data);
@@ -144,22 +153,14 @@ export default function ExperiencesContainer() {
     }
   }, [experiences]);
   return (
-    <div
-      style={{
-        height: '100vh',
-        position: 'relative',
-        boxSizing: 'border-box',
-        backgroundColor: 'white',
-        display: 'flex',
-      }}
-    >
+    <CONTAINER>
       <EXP_CONTAINER>
         {experiences.map((el: any, index: number) => {
           return <ExperienceElement data={el} key={index} />;
         })}
       </EXP_CONTAINER>
       {loading == LOADING_STATE.INIT ? <LoadingSm /> : null}
-    </div>
+    </CONTAINER>
   );
 }
 
@@ -174,6 +175,10 @@ const EXP_ELEMENT = styled.div`
   border: solid 0.5px #141414;
   max-width: calc(min(600px, 48%));
   max-height: 500px;
+  ${'@media (max-width: 601px)'} {
+    width: 95%;
+    max-height: 600px;
+  }
   ${'@media (max-width: 1100px)'} {
     max-width: 100%;
   }
@@ -207,9 +212,15 @@ const EXP_ELEMENT = styled.div`
       display: flex;
       flex-direction: column;
       width: 100%;
+      ${'@media (max-width: 601px)'} {
+        padding: 10px 10px;
+      }
       .desc {
         font-size: 20px;
         height: 100%;
+        ${'@media (max-width: 601px)'} {
+          font-size: 100%;
+        }
       }
       .footer {
         .price {
