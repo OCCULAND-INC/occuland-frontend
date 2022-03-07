@@ -1,4 +1,5 @@
 import styled from '@emotion/styled';
+import { HeartIcon } from '@heroicons/react/solid';
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable sort-keys */
 /* eslint-disable no-console */
@@ -10,7 +11,7 @@ import LoadingSm from '~/components/global/Loading/LoadingSm';
 
 import { LOADING_STATE } from '../loading.types';
 
-const expData = [
+/*const expData = [
   {
     pictures: [
       'https://www.notion.so/image/https%3A%2F%2Fmedia.discordapp.net%2Fattachments%2F501774580000751636%2F907879045339942912%2Fsunrise_2.png?table=block&id=1e393eeb-da2a-4d50-899b-6d87e194981a&spaceId=f5d0b777-d56b-47b8-97b4-c9482dc59fa7&width=600&userId=ae7b2a42-1879-4450-bbf4-8f70d65769ac&cache=v2',
@@ -95,7 +96,7 @@ const expData = [
     platform: 'Decentraland',
     address: '0x913ae503153d9A335398D0785Ba60A2d63dDB4e2',
   },
-];
+];*/
 const supabase = createClient(
   'https://gjlbvpaiezrovocjokmk.supabase.co',
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdqbGJ2cGFpZXpyb3ZvY2pva21rIiwicm9sZSI6ImFub24iLCJpYXQiOjE2NDQzMzM4NTUsImV4cCI6MTk1OTkwOTg1NX0.Er7P__CL1qse_GnYZu7nl9nV2OSsPFVVv7nGo7AYNbw',
@@ -139,10 +140,19 @@ const getItems = async (cb: (e: any) => void) => {
   }
   cb(data);
 };
+const registerInterest = async (itemId: string, cb: (e: any) => void) => {
+  const { data, error } = await supabase.rpc('register_interest', {
+    itemid: itemId.toString(),
+  });
+  if (error) {
+    console.log(error);
+  }
+  cb(data);
+};
 
 export default function ExperiencesContainer() {
   const [loading, setLoading] = useState<LOADING_STATE>(LOADING_STATE.INIT);
-  const [experiences, setExperiences] = useState<any[]>(expData);
+  const [experiences, setExperiences] = useState<any[]>([]);
 
   useEffect(() => {
     getItems(setExperiences);
@@ -165,7 +175,8 @@ export default function ExperiencesContainer() {
 }
 
 const EXP_ELEMENT = styled.div`
-  background-color: white;
+  position: relative;
+
   border-radius: 10px;
   padding: 20px;
   box-shadow: 0px 0px 8px 1px #141414;
@@ -253,12 +264,49 @@ const EXP_ELEMENT = styled.div`
       }
     }
   }
+  .like-container {
+    padding: 0px 20px;
+    height: 40px;
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    .like {
+      max-width: 30px;
+      width: 30px;
+      border-bottom: solid 0.5px #ccc;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      .icon {
+        color: rgba(100, 230, 246, 0.72);
+        cursor: pointer;
+        height: 28px;
+        :hover {
+          color: purple;
+        }
+      }
+      label {
+        font-size: 0.5em;
+        color: #141414;
+      }
+    }
+  }
 `;
 
 function ExperienceElement(props: any) {
+  const [likeStat, setInterest] = useState(props.data.interest);
   const plt = Platforms.filter((el: any) => {
     return el.address == props.data.exp_plat_address;
   })[0];
+
+  useEffect(() => {
+    console.log(props);
+    if (likeStat) {
+      console.log(likeStat);
+    }
+  }, [likeStat]);
+
   if (!plt) {
     return <div>loading . . .</div>;
   }
@@ -282,6 +330,19 @@ function ExperienceElement(props: any) {
               <label>{plt.name}</label>
             </div>
           </div>
+        </div>
+      </div>
+      <div className="like-container">
+        <div
+          className="like"
+          onClick={() =>
+            registerInterest(props.data.id, (_) =>
+              setInterest((prev: any) => (parseInt(prev) + 1).toString()),
+            )
+          }
+        >
+          <HeartIcon className="icon" />
+          <label>{likeStat || 0}</label>
         </div>
       </div>
     </EXP_ELEMENT>
