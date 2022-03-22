@@ -9,7 +9,7 @@ import {
 export const ROUTES_MAP = [
   {
     href: '/',
-    title: 'Explore Land',
+    title: 'Buy Land',
     icon: <MapIcon className="h-5 w-5 mr-2" style={{ color: '#9d5feb' }} />,
   },
   {
@@ -18,7 +18,7 @@ export const ROUTES_MAP = [
     icon: <LibraryIcon className="h-5 w-5 mr-2" style={{ color: '#9d5feb' }} />,
   },
   {
-    href: '/landmarket',
+    href: '/rentals',
     title: 'Rent Land',
     icon: (
       <ShoppingBagIcon className="h-5 w-5 mr-2" style={{ color: '#9d5feb' }} />
